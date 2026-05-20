@@ -1,8 +1,24 @@
 <resources>
-    <string name="app_name">XiaoNengHui</string>
+    <string name="app_name">校能汇</string>
     <string name="nav_home">Home</string>
     <string name="nav_services">Services</string>
     <string name="nav_post">Post</string>
     <string name="nav_orders">Orders</string>
     <string name="nav_profile">Profile</string>
+    <string name="login_logo">校能汇</string>
+    <string name="login_title">欢迎回来</string>
+    <string name="login_subtitle">请输入你的学生信息</string>
+    <string name="login_sign_in">登录</string>
+    <string name="login_sign_up">注册或重置</string>
+    <string name="login_studentID">学号</string>
+    <string name="login_password">密码</string>
+    <string name="login_forgot_password">忘记密码?</string>
+    <string name="login_continue">继续</string>
+    <string name="signup_studentID">学号</string>
+    <string name="signup_password">设置密码</string>
+    <string name="signup_confirm_password">再次输入密码</string>
+    <string name="signup_verify_method">验证方法</string>
+    <string name="signup_verify_email">邮箱</string>
+    <string name="signup_verify_phone">手机</string>
+    <string name="signup_create_account">注册</string>
 </resources>

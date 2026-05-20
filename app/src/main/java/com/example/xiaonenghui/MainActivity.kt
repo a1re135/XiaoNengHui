@@ -1,6 +1,7 @@
 package com.example.xiaonenghui
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -32,8 +33,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (savedInstanceState == null) {
-            bottomNav.selectedItemId = R.id.nav_home
+            if (isLoggedIn()) {
+                showMainUi()
+            } else {
+                showLoginUi()
+            }
         }
+    }
+
+    fun showMainUi() {
+        findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
+        switchFragment(HomeFragment())
+        findViewById<BottomNavigationView>(R.id.bottom_nav).selectedItemId = R.id.nav_home
+    }
+
+    private fun showLoginUi() {
+        findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
+        switchFragment(LoginFragment())
+    }
+
+    private fun isLoggedIn(): Boolean {
+        val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        return prefs.getBoolean("is_logged_in", false)
+    }
+
+    fun setLoggedIn(value: Boolean) {
+        val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        prefs.edit().putBoolean("is_logged_in", value).apply()
     }
 
     private fun switchFragment(fragment: Fragment) {
