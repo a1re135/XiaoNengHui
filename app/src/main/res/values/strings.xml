@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">XiaoNengHui</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_services">Services</string>
+    <string name="nav_post">Post</string>
+    <string name="nav_orders">Orders</string>
+    <string name="nav_profile">Profile</string>
 </resources>
