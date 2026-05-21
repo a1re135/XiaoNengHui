@@ -37,18 +37,36 @@ class LoginFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.sign_in_button).setOnClickListener {
-            (activity as? MainActivity)?.setLoggedIn(true)
-            (activity as? MainActivity)?.showMainUi()
+            showSuccessThenGoHome(view)
         }
 
         view.findViewById<Button>(R.id.sign_up_button).setOnClickListener {
-            (activity as? MainActivity)?.setLoggedIn(true)
-            (activity as? MainActivity)?.showMainUi()
-        }
-
-        view.findViewById<TextView>(R.id.forgot_password).setOnClickListener {
-            // Placeholder for future flow
+            showSuccessThenGoHome(view)
         }
     }
-}
 
+    private fun showSuccessThenGoHome(view: View) {
+        val successBox = view.findViewById<View>(R.id.auth_success_box)
+        val signInButton = view.findViewById<Button>(R.id.sign_in_button)
+        val signUpButton = view.findViewById<Button>(R.id.sign_up_button)
+
+        signInButton.isEnabled = false
+        signUpButton.isEnabled = false
+
+        successBox.visibility = View.VISIBLE
+        successBox.alpha = 0f
+        successBox.translationY = 24f
+
+        successBox.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(300)
+            .start()
+
+        view.postDelayed({
+            if (!isAdded) return@postDelayed
+            (activity as? MainActivity)?.setLoggedIn(true)
+            (activity as? MainActivity)?.showMainUi()
+        }, 2000)
+    }
+}
