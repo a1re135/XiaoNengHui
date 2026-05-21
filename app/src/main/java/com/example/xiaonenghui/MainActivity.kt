@@ -62,6 +62,11 @@ class MainActivity : AppCompatActivity() {
         prefs.edit().putBoolean("is_logged_in", value).apply()
     }
 
+    fun logout(){
+        setLoggedIn(false)
+        showLoginUi()
+    }
+
     private fun switchFragment(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()
