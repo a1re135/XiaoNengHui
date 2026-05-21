@@ -23,5 +23,5 @@
     <string name="signup_create_account">注册</string>
     <string name="logout_button">退出登录</string>
     <string name="login_correct">正确的！</string>
-    <string name="login_transition">我们已经验证了您的身份，正在为您跳转到用户中心...</string>"
+    <string name="login_transition">我们已经验证了您的身份，正在为您跳转到用户中心...</string>
 </resources>

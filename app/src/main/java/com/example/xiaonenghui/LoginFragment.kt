@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
+import android.widget.Toast
+import com.google.android.material.textfield.TextInputEditText
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButtonToggleGroup
 
@@ -20,6 +21,13 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val signInStudentId = view.findViewById<TextInputEditText>(R.id.sign_in_student_id)
+        val signInPassword = view.findViewById<TextInputEditText>(R.id.sign_in_password)
+
+        val signUpStudentId = view.findViewById<TextInputEditText>(R.id.sign_up_student_id)
+        val signUpPassword = view.findViewById<TextInputEditText>(R.id.sign_up_password)
+        val signUpConfirmPassword = view.findViewById<TextInputEditText>(R.id.sign_up_confirm_password)
 
         val toggleGroup = view.findViewById<MaterialButtonToggleGroup>(R.id.auth_toggle_group)
         val signInContainer = view.findViewById<View>(R.id.sign_in_container)
@@ -37,10 +45,60 @@ class LoginFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.sign_in_button).setOnClickListener {
+            val studentId = signInStudentId.text.toString().trim()
+            val password = signInPassword.text.toString().trim()
+
+            signInStudentId.error = null
+            signInPassword.error = null
+
+            if (studentId.isEmpty()) {
+                signInStudentId.error = "学号不能为空"
+                signInStudentId.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (password.isEmpty()) {
+                signInPassword.error = "密码不能为空"
+                signInPassword.requestFocus()
+                return@setOnClickListener
+            }
+
             showSuccessThenGoHome(view)
         }
 
         view.findViewById<Button>(R.id.sign_up_button).setOnClickListener {
+            val studentId = signUpStudentId.text.toString().trim()
+            val password = signUpPassword.text.toString().trim()
+            val confirmPassword = signUpConfirmPassword.text.toString().trim()
+
+            signUpStudentId.error = null
+            signUpPassword.error = null
+            signUpConfirmPassword.error = null
+
+            if (studentId.isEmpty()) {
+                signUpStudentId.error = "学号不能为空"
+                signUpStudentId.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (password.isEmpty()) {
+                signUpPassword.error = "密码不能为空"
+                signUpPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (confirmPassword.isEmpty()) {
+                signUpConfirmPassword.error = "再次输入密码不能为空"
+                signUpConfirmPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (password != confirmPassword) {
+                signUpConfirmPassword.error = "两次密码必须一样"
+                signUpConfirmPassword.requestFocus()
+                return@setOnClickListener
+            }
+
             showSuccessThenGoHome(view)
         }
     }
