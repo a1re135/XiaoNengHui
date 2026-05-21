@@ -2,6 +2,14 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.XiaoNengHui" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/blue_primary_night</item>
+        <item name="colorOnPrimary">@color/blue_on_primary_night</item>
+        <item name="colorPrimaryContainer">@color/blue_primary_container_night</item>
+        <item name="colorOnPrimaryContainer">@color/blue_on_primary_container_night</item>
+        <item name="colorSecondary">@color/blue_secondary_night</item>
+        <item name="colorOnSecondary">@color/blue_on_secondary_night</item>
+        <item name="android:colorBackground">@color/blue_background_night</item>
+        <item name="colorSurface">@color/blue_surface_night</item>
+        <item name="colorOnSurface">@color/blue_on_surface_night</item>
     </style>
 </resources>

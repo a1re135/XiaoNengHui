@@ -2,4 +2,31 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="blue_primary">#FF2563EB</color>
+    <color name="blue_primary_dark">#FF1E40AF</color>
+    <color name="blue_primary_container">#FFDBEAFE</color>
+    <color name="blue_on_primary">#FFFFFFFF</color>
+    <color name="blue_on_primary_container">#FF0B1F4B</color>
+    <color name="blue_secondary">#FF3B82F6</color>
+    <color name="blue_on_secondary">#FFFFFFFF</color>
+    <color name="blue_surface">#FFFFFFFF</color>
+    <color name="blue_on_surface">#FF111827</color>
+    <color name="blue_background">#FFF8FAFF</color>
+    <color name="blue_on_background">#FF0F172A</color>
+
+    <color name="toggle_bg_checked">@color/blue_primary</color>
+    <color name="toggle_bg_unchecked">#FFE5E7EB</color>
+    <color name="toggle_text_checked">@color/blue_on_primary</color>
+    <color name="toggle_text_unchecked">#FF374151</color>
+
+    <color name="blue_primary_night">#FF60A5FA</color>
+    <color name="blue_on_primary_night">#FF0B1F4B</color>
+    <color name="blue_primary_container_night">#FF1E3A8A</color>
+    <color name="blue_on_primary_container_night">#FFE0E7FF</color>
+    <color name="blue_secondary_night">#FF93C5FD</color>
+    <color name="blue_on_secondary_night">#FF0B1F4B</color>
+    <color name="blue_surface_night">#FF111827</color>
+    <color name="blue_on_surface_night">#FFE5E7EB</color>
+    <color name="blue_background_night">#FF0B1220</color>
+    <color name="blue_on_background_night">#FFE5E7EB</color>
 </resources>
