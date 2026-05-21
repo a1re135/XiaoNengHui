@@ -57,6 +57,12 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            if (studentId.length != 10) {
+                signInStudentId.error = "学号错误"
+                signInStudentId.requestFocus()
+                return@setOnClickListener
+            }
+
             if (password.isEmpty()) {
                 signInPassword.error = "密码不能为空"
                 signInPassword.requestFocus()
@@ -84,6 +90,12 @@ class LoginFragment : Fragment() {
             if (password.isEmpty()) {
                 signUpPassword.error = "密码不能为空"
                 signUpPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (studentId.length != 10){
+                signUpStudentId.error = "学号错误"
+                signUpStudentId.requestFocus()
                 return@setOnClickListener
             }
 
