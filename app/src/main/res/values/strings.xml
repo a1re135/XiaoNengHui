@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">校能汇</string>
-    <string name="nav_home">Home</string>
-    <string name="nav_services">Services</string>
-    <string name="nav_post">Post</string>
-    <string name="nav_orders">Orders</string>
-    <string name="nav_profile">Profile</string>
+    <string name="nav_home">首页</string>
+    <string name="nav_services">服务</string>
+    <string name="nav_post">发布</string>
+    <string name="nav_orders">订单</string>
+    <string name="nav_profile">我的</string>
     <string name="login_logo">校能汇</string>
     <string name="login_title">欢迎回来</string>
     <string name="login_subtitle">请输入你的学生信息</string>
