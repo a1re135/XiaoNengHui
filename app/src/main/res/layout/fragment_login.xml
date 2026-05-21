@@ -110,14 +110,6 @@
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/forgot_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/login_forgot_password"
-                android:textColor="@android:color/holo_blue_dark" />
-
             <Button
                 android:id="@+id/sign_in_button"
                 android:layout_width="match_parent"
