@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import android.graphics.Color
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
@@ -79,30 +79,49 @@ class HomeFragment : Fragment() {
         container.removeAllViews()
 
         val latestTasks = AppDataStore.tasks.take(2)
+        val inflater = LayoutInflater.from(requireContext())
 
         for (task in latestTasks) {
-            val card = MaterialCardView(requireContext()).apply {
-                radius = 18f
-                cardElevation = 3f
-                setCardBackgroundColor(Color.WHITE)
+            val itemView = inflater.inflate(R.layout.item_home_task, container, false)
 
-                val params = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                params.setMargins(0, 12, 0, 0)
-                layoutParams = params
+            val iconView = itemView.findViewById<TextView>(R.id.task_icon)
+            val titleView = itemView.findViewById<TextView>(R.id.task_title)
+            val tagView = itemView.findViewById<TextView>(R.id.task_tag)
+            val timeView = itemView.findViewById<TextView>(R.id.task_time)
+            val priceView = itemView.findViewById<TextView>(R.id.task_price)
+            val statusView = itemView.findViewById<TextView>(R.id.task_status)
+
+            titleView.text = task.title
+            tagView.text = task.category
+            timeView.text = task.location
+            priceView.text = task.price
+            statusView.text = task.status
+
+            val iconText = when {
+                task.category.contains("跑腿") -> "取"
+                task.category.contains("技术") -> "码"
+                task.category.contains("辅导") -> "辅"
+                task.category.contains("设计") -> "创"
+                else -> "任"
+            }
+            iconView.text = iconText
+
+            when {
+                task.status.contains("待") -> {
+                    statusView.setBackgroundResource(R.drawable.bg_chip_warning)
+                    statusView.setTextColor(ContextCompat.getColor(requireContext(), R.color.tertiary_amber))
+                }
+                task.status.contains("中") -> {
+                    statusView.setBackgroundResource(R.drawable.bg_chip_success)
+                    statusView.setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_green))
+                }
+                else -> {
+                    statusView.setBackgroundResource(R.drawable.bg_chip_neutral)
+                    statusView.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
+                }
             }
 
-            val text = TextView(requireContext()).apply {
-                text = "${task.title}\n${task.category} | ${task.location} | ${task.price} | ${task.status}"
-                textSize = 15f
-                setTextColor(Color.parseColor("#111827"))
-                setPadding(24, 20, 24, 20)
-            }
-
-            card.addView(text)
-            container.addView(card)
+            container.addView(itemView)
         }
     }
 }
