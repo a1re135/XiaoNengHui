@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import android.graphics.Color
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
@@ -59,6 +62,47 @@ class HomeFragment : Fragment() {
         buttonSwitchRole.setOnClickListener {
             Toast.makeText(requireContext(), "身份切换功能将在个人中心完善", Toast.LENGTH_SHORT).show()
             (activity as? MainActivity)?.selectBottomTab(R.id.nav_profile)
+        }
+
+        renderLatestTasks(view)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        view?.let {
+            renderLatestTasks(it)
+        }
+    }
+
+    private fun renderLatestTasks(view: View) {
+        val container = view.findViewById<LinearLayout>(R.id.home_latest_tasks_container)
+        container.removeAllViews()
+
+        val latestTasks = AppDataStore.tasks.take(2)
+
+        for (task in latestTasks) {
+            val card = MaterialCardView(requireContext()).apply {
+                radius = 18f
+                cardElevation = 3f
+                setCardBackgroundColor(Color.WHITE)
+
+                val params = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                params.setMargins(0, 12, 0, 0)
+                layoutParams = params
+            }
+
+            val text = TextView(requireContext()).apply {
+                text = "${task.title}\n${task.category} | ${task.location} | ${task.price} | ${task.status}"
+                textSize = 15f
+                setTextColor(Color.parseColor("#111827"))
+                setPadding(24, 20, 24, 20)
+            }
+
+            card.addView(text)
+            container.addView(card)
         }
     }
 }
