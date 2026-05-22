@@ -67,6 +67,10 @@ class MainActivity : AppCompatActivity() {
         showLoginUi()
     }
 
+    fun selectBottomTab(itemId: Int) {
+        findViewById<BottomNavigationView>(R.id.bottom_nav).selectedItemId = itemId
+    }
+
     private fun switchFragment(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()
