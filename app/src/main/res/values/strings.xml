@@ -24,4 +24,59 @@
     <string name="logout_button">退出登录</string>
     <string name="login_correct">正确的！</string>
     <string name="login_transition">我们已经验证了您的身份，正在为您跳转到用户中心...</string>
+
+    <string name="home_brand">校能汇</string>
+    <string name="home_notify_icon">铃</string>
+    <string name="home_greeting">你好，欢迎来到校能汇</string>
+    <string name="home_slogan">让校园服务更简单，让学生成长更有价值</string>
+    <string name="home_search_icon">搜</string>
+    <string name="home_search_hint">搜索课程辅导、代取快递、PPT制作…</string>
+
+    <string name="home_icon_tutoring">辅</string>
+    <string name="home_feature_tutoring">技能辅导</string>
+    <string name="home_icon_creative">创</string>
+    <string name="home_feature_creative">创意服务</string>
+    <string name="home_icon_errands">跑</string>
+    <string name="home_feature_errands">校园跑腿</string>
+    <string name="home_icon_post">发</string>
+    <string name="home_feature_post">发布任务</string>
+    <string name="home_icon_orders">单</string>
+    <string name="home_feature_orders">我的订单</string>
+    <string name="home_icon_rating">评</string>
+    <string name="home_feature_rating">信用评价</string>
+
+    <string name="home_recommended">推荐服务</string>
+    <string name="home_view_more">查看更多</string>
+    <string name="home_tag_tutoring">技能传授</string>
+    <string name="home_service_math">高等数学辅导</string>
+    <string name="home_rating_star">★</string>
+    <string name="home_rating_49">4.9</string>
+    <string name="home_price_30">￥30/时</string>
+    <string name="home_tag_design">设计制作</string>
+    <string name="home_service_ppt">专业PPT制作</string>
+    <string name="home_rating_50">5.0</string>
+    <string name="home_price_50">￥50起</string>
+    <string name="home_tag_life">生活服务</string>
+    <string name="home_service_delivery">校园代取快递</string>
+    <string name="home_rating_48">4.8</string>
+    <string name="home_price_5">￥5/件</string>
+
+    <string name="home_latest_tasks">附近任务 / 最新任务</string>
+    <string name="home_icon_package">取</string>
+    <string name="home_task_pickup">取快递 - 宿舍A栋</string>
+    <string name="home_tag_errands">生活跑腿</string>
+    <string name="home_time_10min">10分钟前</string>
+    <string name="home_price_5_only">￥5</string>
+    <string name="home_status_waiting">待接单</string>
+    <string name="home_icon_code">码</string>
+    <string name="home_task_debug">Java代码找错</string>
+    <string name="home_tag_tech">技术支持</string>
+    <string name="home_time_30min">30分钟前</string>
+    <string name="home_price_20">￥20</string>
+    <string name="home_status_working">进行中</string>
+
+    <string name="home_load_more">加载更多任务</string>
+    <string name="home_role_label">当前身份</string>
+    <string name="home_role_requester">需求方</string>
+    <string name="home_role_switch">切换为服务提供者</string>
 </resources>

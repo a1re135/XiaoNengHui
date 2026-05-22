@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>校能汇 - 首页</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#cbdbf5",
+                        "surface-container": "#e5eeff",
+                        "on-primary-container": "#fefcff",
+                        "inverse-surface": "#213145",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-container": "#a36700",
+                        "on-secondary-container": "#00714d",
+                        "surface-bright": "#f8f9ff",
+                        "tertiary": "#825100",
+                        "secondary-container": "#6cf8bb",
+                        "primary": "#0058be",
+                        "outline": "#727785",
+                        "on-tertiary-fixed": "#2a1700",
+                        "surface": "#f8f9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001a42",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-surface": "#0b1c30",
+                        "surface-variant": "#d3e4fe",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#0b1c30",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#eaf1ff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "primary-fixed": "#d8e2ff",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "tertiary-fixed": "#ffddb8",
+                        "primary-container": "#2170e4",
+                        "on-secondary-fixed": "#002113",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-container-high": "#dce9ff",
+                        "on-surface-variant": "#424754",
+                        "background": "#f8f9ff",
+                        "outline-variant": "#c2c6d6",
+                        "surface-tint": "#005ac2",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#adc6ff",
+                        "secondary-fixed": "#6ffbbe",
+                        "surface-container-low": "#eff4ff",
+                        "secondary": "#006c49",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-tablet": "24px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim shadow-sm flex items-center justify-between px-margin-mobile w-full h-16 sticky top-0 z-40 hidden md:flex">
+<div class="flex items-center gap-3">
+<img alt="Campus SkillHub Logo" class="w-8 h-8 rounded-full shadow-sm object-cover" src="data:image/png;base64,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"/>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Campus SkillHub</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-variant/50 transition-colors text-on-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl">search</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-variant/50 transition-colors text-on-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Mobile Top Header (replaces standard app bar on mobile for welcome section) -->
+<div class="md:hidden bg-gradient-to-br from-primary-container to-surface-container text-on-primary-container px-margin-mobile pt-8 pb-12 rounded-b-[2rem] relative shadow-sm">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-2">
+<img alt="Campus SkillHub Logo" class="w-10 h-10 rounded-full shadow-sm object-cover bg-white p-0.5" src="data:image/png;base64,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"/>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">校能汇</span>
+</div>
+<button class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary">notifications</span>
+</button>
+</div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-2">你好，欢迎来到校能汇</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[80%]">让校园服务更简单，让学生成长更有价值</p>
+<!-- Absolute Search Bar -->
+<div class="absolute -bottom-6 left-margin-mobile right-margin-mobile">
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.08)] flex items-center px-4 py-3 border border-outline-variant/30">
+<span class="material-symbols-outlined text-on-surface-variant mr-3">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface placeholder-on-surface-variant/70 p-0" placeholder="搜索课程辅导、代取快递、PPT制作…" type="text"/>
+</div>
+</div>
+</div>
+<main class="flex-grow w-full max-w-4xl mx-auto px-margin-mobile pt-10 md:pt-8 flex flex-col gap-8">
+<!-- Main Feature Grid (Bento style) -->
+<section>
+<div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+<button class="bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center shadow-sm border border-outline-variant/20 hover:bg-surface-container-low transition-colors active:scale-95 group">
+<div class="w-12 h-12 rounded-full bg-primary-container/20 text-primary flex items-center justify-center mb-2 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[28px]">school</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">技能辅导</span>
+</button>
+<button class="bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center shadow-sm border border-outline-variant/20 hover:bg-surface-container-low transition-colors active:scale-95 group">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 text-secondary flex items-center justify-center mb-2 group-hover:bg-secondary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[28px]">palette</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">创意服务</span>
+</button>
+<button class="bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center shadow-sm border border-outline-variant/20 hover:bg-surface-container-low transition-colors active:scale-95 group">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/20 text-tertiary flex items-center justify-center mb-2 group-hover:bg-tertiary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[28px]">directions_run</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">校园跑腿</span>
+</button>
+<button class="bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center shadow-sm border border-outline-variant/20 hover:bg-surface-container-low transition-colors active:scale-95 group">
+<div class="w-12 h-12 rounded-full bg-primary-container/20 text-primary flex items-center justify-center mb-2 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[28px]">add_task</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">发布任务</span>
+</button>
+<button class="bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center shadow-sm border border-outline-variant/20 hover:bg-surface-container-low transition-colors active:scale-95 group">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 text-secondary flex items-center justify-center mb-2 group-hover:bg-secondary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[28px]">receipt_long</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">我的订单</span>
+</button>
+<button class="bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center shadow-sm border border-outline-variant/20 hover:bg-surface-container-low transition-colors active:scale-95 group">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/20 text-tertiary flex items-center justify-center mb-2 group-hover:bg-tertiary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[28px]">verified</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">信用评价</span>
+</button>
+</div>
+</section>
+<!-- Recommended Services (Horizontal Scroll) -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">推荐服务</h3>
+<button class="font-label-md text-label-md text-primary flex items-center hover:underline">查看更多 <span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar gap-4 pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0">
+<!-- Service Card 1 -->
+<div class="min-w-[200px] md:w-64 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden flex-shrink-0 cursor-pointer hover:shadow-md transition-shadow">
+<div class="h-24 bg-gradient-to-r from-primary-container to-primary-fixed-dim relative">
+<div class="absolute bottom-2 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md">
+<span class="font-label-sm text-label-sm text-primary font-bold">技能传授</span>
+</div>
+</div>
+<div class="p-3">
+<h4 class="font-label-lg text-label-lg text-on-surface mb-1 truncate">高等数学辅导</h4>
+<div class="flex items-center justify-between mt-2">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4.9</span>
+</div>
+<span class="font-label-lg text-label-lg text-primary font-bold">￥30/时</span>
+</div>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="min-w-[200px] md:w-64 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden flex-shrink-0 cursor-pointer hover:shadow-md transition-shadow">
+<div class="h-24 bg-gradient-to-r from-secondary-container to-secondary-fixed-dim relative">
+<div class="absolute bottom-2 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md">
+<span class="font-label-sm text-label-sm text-secondary font-bold">设计制作</span>
+</div>
+</div>
+<div class="p-3">
+<h4 class="font-label-lg text-label-lg text-on-surface mb-1 truncate">专业PPT制作</h4>
+<div class="flex items-center justify-between mt-2">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5.0</span>
+</div>
+<span class="font-label-lg text-label-lg text-primary font-bold">￥50起</span>
+</div>
+</div>
+</div>
+<!-- Service Card 3 -->
+<div class="min-w-[200px] md:w-64 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden flex-shrink-0 cursor-pointer hover:shadow-md transition-shadow">
+<div class="h-24 bg-gradient-to-r from-tertiary-container/50 to-tertiary-fixed-dim relative">
+<div class="absolute bottom-2 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md">
+<span class="font-label-sm text-label-sm text-tertiary font-bold">生活服务</span>
+</div>
+</div>
+<div class="p-3">
+<h4 class="font-label-lg text-label-lg text-on-surface mb-1 truncate">校园代取快递</h4>
+<div class="flex items-center justify-between mt-2">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4.8</span>
+</div>
+<span class="font-label-lg text-label-lg text-primary font-bold">￥5/件</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Latest Tasks Section (Masonry-ish list) -->
+<section class="mb-8">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">附近任务 / 最新任务</h3>
+<div class="flex flex-col gap-3">
+<!-- Task Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant/20 flex justify-between items-start cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant">package_2</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">取快递 - 宿舍A栋</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-variant px-2 py-0.5 rounded-full">生活跑腿</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center"><span class="material-symbols-outlined text-[14px] mr-0.5">schedule</span>10分钟前</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">￥5</span>
+<span class="font-label-sm text-label-sm text-tertiary bg-tertiary-container/20 px-2 py-0.5 rounded-full">待接单</span>
+</div>
+</div>
+<!-- Task Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant/20 flex justify-between items-start cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant">terminal</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">Java代码找错</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-variant px-2 py-0.5 rounded-full">技术支持</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center"><span class="material-symbols-outlined text-[14px] mr-0.5">schedule</span>30分钟前</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">￥20</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-container/30 px-2 py-0.5 rounded-full">进行中</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-4 py-3 rounded-xl border border-outline-variant/50 font-label-lg text-label-lg text-primary hover:bg-primary-container/10 transition-colors">
+                加载更多任务
+            </button>
+</section>
+</main>
+<!-- User Role Switcher (Floating Card) -->
+<div class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-surface-container-lowest rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-outline-variant/20 p-3 flex items-center justify-between z-40 backdrop-blur-md bg-white/90">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">当前身份</span>
+<span class="font-label-lg text-label-lg text-primary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person_raised_hand</span> 需求方
+            </span>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors active:scale-95 shadow-sm">
+            切换为服务提供者
+        </button>
+</div>
+<!-- BottomNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-inverse-surface shadow-[0_-4px_12px_rgba(0,0,0,0.05)] docked full-width bottom-0 rounded-t-xl fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-3 md:hidden">
+<!-- Active Tab: 首页 (Home) -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[24px]" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-label-sm mt-0.5">首页</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 transition-all duration-200 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[24px]">grid_view</span>
+<span class="font-label-sm text-label-sm mt-0.5">服务</span>
+</button>
+<!-- Prominent FAB-style center button -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-all duration-200 -mt-6">
+<div class="bg-primary text-on-primary rounded-full p-3 shadow-md hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</div>
+<span class="font-label-sm text-label-sm mt-1 font-bold">发布</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 transition-all duration-200 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[24px]">receipt_long</span>
+<span class="font-label-sm text-label-sm mt-0.5">订单</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 transition-all duration-200 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<span class="font-label-sm text-label-sm mt-0.5">我的</span>
+</button>
+</nav>
+</body></html>
