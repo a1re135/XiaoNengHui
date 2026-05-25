@@ -1,16 +1,22 @@
 package com.example.xiaonenghui
 
-import android.graphics.Color
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.card.MaterialCardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 
 class OrdersFragment : Fragment() {
+
+    private lateinit var ordersAdapter: OrdersAdapter
+    private var currentFilter = OrderFilter.ALL
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,57 +26,270 @@ class OrdersFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_orders, container, false)
     }
 
-    override fun onResume() {
-        super.onResume()
-        view?.let {
-            renderOrders(it)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val ordersList = view.findViewById<RecyclerView>(R.id.orders_list)
+        val emptyText = view.findViewById<TextView>(R.id.orders_empty_text)
+
+        ordersAdapter = OrdersAdapter(
+            onCardClick = { task ->
+                Toast.makeText(requireContext(), "订单：${task.title}", Toast.LENGTH_SHORT).show()
+            },
+            onPrimaryAction = { task, action ->
+                handleOrderAction(task, action)
+            },
+            onSecondaryAction = { task, action ->
+                handleOrderAction(task, action)
+            }
+        )
+
+        ordersList.layoutManager = LinearLayoutManager(requireContext())
+        ordersList.adapter = ordersAdapter
+
+        val filterAll = view.findViewById<MaterialButton>(R.id.filter_all)
+        val filterPending = view.findViewById<MaterialButton>(R.id.filter_pending)
+        val filterInProgress = view.findViewById<MaterialButton>(R.id.filter_in_progress)
+        val filterCompleted = view.findViewById<MaterialButton>(R.id.filter_completed)
+        val filterCancelled = view.findViewById<MaterialButton>(R.id.filter_cancelled)
+
+        val filters = linkedMapOf(
+            filterAll to OrderFilter.ALL,
+            filterPending to OrderFilter.PENDING,
+            filterInProgress to OrderFilter.IN_PROGRESS,
+            filterCompleted to OrderFilter.COMPLETED,
+            filterCancelled to OrderFilter.CANCELLED
+        )
+
+        filters.forEach { (button, filter) ->
+            button.setOnClickListener { applyFilter(filter, filters.keys, emptyText) }
+        }
+
+        applyFilter(OrderFilter.ALL, filters.keys, emptyText)
+    }
+
+    private fun applyFilter(
+        filter: OrderFilter,
+        buttons: Collection<MaterialButton>,
+        emptyText: TextView
+    ) {
+        currentFilter = filter
+        updateFilterButtons(filter, buttons)
+
+        val filtered = when (filter) {
+            OrderFilter.ALL -> AppDataStore.tasks.toList()
+            else -> AppDataStore.tasks.filter { it.status == filter.status }
+        }
+
+        ordersAdapter.submitList(filtered)
+        emptyText.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun updateFilterButtons(filter: OrderFilter, buttons: Collection<MaterialButton>) {
+        val activeBackground = ContextCompat.getColor(requireContext(), R.color.blue_primary_container)
+        val activeText = ContextCompat.getColor(requireContext(), R.color.blue_on_primary_container)
+        val inactiveBackground = ContextCompat.getColor(requireContext(), R.color.surface_container_high)
+        val inactiveText = ContextCompat.getColor(requireContext(), R.color.blue_on_surface)
+
+        buttons.forEach { button ->
+            val isActive = when (filter) {
+                OrderFilter.ALL -> button.id == R.id.filter_all
+                OrderFilter.PENDING -> button.id == R.id.filter_pending
+                OrderFilter.IN_PROGRESS -> button.id == R.id.filter_in_progress
+                OrderFilter.COMPLETED -> button.id == R.id.filter_completed
+                OrderFilter.CANCELLED -> button.id == R.id.filter_cancelled
+            }
+
+            val background = if (isActive) activeBackground else inactiveBackground
+            val textColor = if (isActive) activeText else inactiveText
+            button.backgroundTintList = ColorStateList.valueOf(background)
+            button.setTextColor(textColor)
         }
     }
 
-    private fun renderOrders(view: View) {
-        val container = view.findViewById<LinearLayout>(R.id.orders_list_container)
-        val emptyText = view.findViewById<TextView>(R.id.orders_empty_text)
-
-        container.removeAllViews()
-
-        if (AppDataStore.tasks.isEmpty()) {
-            emptyText.visibility = View.VISIBLE
-            return
-        } else {
-            emptyText.visibility = View.GONE
+    private fun handleOrderAction(task: TaskItem, action: OrderAction) {
+        when (action) {
+            OrderAction.CANCEL -> {
+                updateTaskStatus(task, "已取消")
+                Toast.makeText(requireContext(), "已取消订单", Toast.LENGTH_SHORT).show()
+            }
+            OrderAction.PROGRESS -> {
+                Toast.makeText(requireContext(), "正在查看进度", Toast.LENGTH_SHORT).show()
+            }
+            OrderAction.REORDER -> {
+                Toast.makeText(requireContext(), "已创建相同需求", Toast.LENGTH_SHORT).show()
+            }
+            OrderAction.REVIEW -> {
+                Toast.makeText(requireContext(), "进入评价", Toast.LENGTH_SHORT).show()
+            }
+            OrderAction.DELETE -> {
+                AppDataStore.tasks.remove(task)
+                Toast.makeText(requireContext(), "已删除订单", Toast.LENGTH_SHORT).show()
+            }
+            OrderAction.CONTACT -> {
+                Toast.makeText(requireContext(), "正在联系对方", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        for (task in AppDataStore.tasks) {
-            val card = MaterialCardView(requireContext()).apply {
-                radius = 18f
-                cardElevation = 3f
-                setCardBackgroundColor(Color.WHITE)
+        view?.findViewById<TextView>(R.id.orders_empty_text)?.let { emptyText ->
+            val buttons = listOfNotNull(
+                view?.findViewById(R.id.filter_all),
+                view?.findViewById(R.id.filter_pending),
+                view?.findViewById(R.id.filter_in_progress),
+                view?.findViewById(R.id.filter_completed),
+                view?.findViewById(R.id.filter_cancelled)
+            )
+            applyFilter(currentFilter, buttons.filterIsInstance<MaterialButton>(), emptyText)
+        }
+    }
 
-                val params = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                params.setMargins(0, 0, 0, 16)
-                layoutParams = params
+    private fun updateTaskStatus(task: TaskItem, newStatus: String) {
+        val index = AppDataStore.tasks.indexOfFirst { it == task }
+        if (index != -1) {
+            AppDataStore.tasks[index] = task.copy(status = newStatus)
+        }
+    }
+
+    private enum class OrderFilter(val status: String?) {
+        ALL(null),
+        PENDING("待接单"),
+        IN_PROGRESS("进行中"),
+        COMPLETED("已完成"),
+        CANCELLED("已取消")
+    }
+
+    private enum class OrderAction {
+        CANCEL,
+        PROGRESS,
+        REORDER,
+        REVIEW,
+        DELETE,
+        CONTACT
+    }
+
+    private class OrdersAdapter(
+        private val onCardClick: (TaskItem) -> Unit,
+        private val onPrimaryAction: (TaskItem, OrderAction) -> Unit,
+        private val onSecondaryAction: (TaskItem, OrderAction) -> Unit
+    ) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
+
+        private val items = mutableListOf<TaskItem>()
+
+        fun submitList(newItems: List<TaskItem>) {
+            items.clear()
+            items.addAll(newItems)
+            notifyDataSetChanged()
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_order_card, parent, false)
+            return OrderViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
+            holder.bind(items[position], onCardClick, onPrimaryAction, onSecondaryAction)
+        }
+
+        override fun getItemCount(): Int = items.size
+
+        class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            private val statusBadge = itemView.findViewById<TextView>(R.id.order_status_badge)
+            private val time = itemView.findViewById<TextView>(R.id.order_time)
+            private val title = itemView.findViewById<TextView>(R.id.order_title)
+            private val category = itemView.findViewById<TextView>(R.id.order_category_chip)
+            private val price = itemView.findViewById<TextView>(R.id.order_price)
+            private val location = itemView.findViewById<TextView>(R.id.order_location)
+            private val description = itemView.findViewById<TextView>(R.id.order_description)
+            private val primaryAction = itemView.findViewById<MaterialButton>(R.id.order_action_primary)
+            private val secondaryAction = itemView.findViewById<MaterialButton>(R.id.order_action_secondary)
+
+            fun bind(
+                item: TaskItem,
+                onCardClick: (TaskItem) -> Unit,
+                onPrimaryAction: (TaskItem, OrderAction) -> Unit,
+                onSecondaryAction: (TaskItem, OrderAction) -> Unit
+            ) {
+                statusBadge.text = item.status
+                title.text = item.title
+                category.text = item.category
+                price.text = formatPrice(item.price)
+                time.text = "刚刚"
+                location.text = "地点：${item.location}"
+
+                if (item.description.isBlank()) {
+                    description.visibility = View.GONE
+                } else {
+                    description.visibility = View.VISIBLE
+                    description.text = item.description
+                }
+
+                when (item.status) {
+                    "待接单" -> {
+                        statusBadge.setBackgroundResource(R.drawable.bg_chip_warning)
+                        statusBadge.setTextColor(
+                            ContextCompat.getColor(itemView.context, R.color.tertiary_amber)
+                        )
+                        primaryAction.text = "取消订单"
+                        primaryAction.visibility = View.VISIBLE
+                        secondaryAction.visibility = View.GONE
+                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.CANCEL) }
+                    }
+                    "进行中" -> {
+                        statusBadge.setBackgroundResource(R.drawable.bg_chip_success)
+                        statusBadge.setTextColor(
+                            ContextCompat.getColor(itemView.context, R.color.secondary_green)
+                        )
+                        primaryAction.text = "查看进度"
+                        primaryAction.visibility = View.VISIBLE
+                        secondaryAction.visibility = View.GONE
+                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.PROGRESS) }
+                    }
+                    "已完成" -> {
+                        statusBadge.setBackgroundResource(R.drawable.bg_chip_success)
+                        statusBadge.setTextColor(
+                            ContextCompat.getColor(itemView.context, R.color.secondary_green)
+                        )
+                        secondaryAction.text = "再来一单"
+                        primaryAction.text = "评价服务"
+                        secondaryAction.visibility = View.VISIBLE
+                        primaryAction.visibility = View.VISIBLE
+                        secondaryAction.setOnClickListener { onSecondaryAction(item, OrderAction.REORDER) }
+                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.REVIEW) }
+                    }
+                    "已取消" -> {
+                        statusBadge.setBackgroundResource(R.drawable.bg_chip_neutral)
+                        statusBadge.setTextColor(
+                            ContextCompat.getColor(itemView.context, R.color.blue_on_surface)
+                        )
+                        primaryAction.text = "删除订单"
+                        primaryAction.visibility = View.VISIBLE
+                        secondaryAction.visibility = View.GONE
+                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.DELETE) }
+                    }
+                    else -> {
+                        statusBadge.setBackgroundResource(R.drawable.bg_chip_neutral)
+                        statusBadge.setTextColor(
+                            ContextCompat.getColor(itemView.context, R.color.blue_on_surface)
+                        )
+                        primaryAction.text = "联系对方"
+                        primaryAction.visibility = View.VISIBLE
+                        secondaryAction.visibility = View.GONE
+                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.CONTACT) }
+                    }
+                }
+
+                itemView.setOnClickListener { onCardClick(item) }
             }
 
-            val text = TextView(requireContext()).apply {
-                text = """
-                    ${task.title}
-                    类型：${task.category}
-                    地点：${task.location}
-                    价格：${task.price}
-                    状态：${task.status}
-                    描述：${task.description}
-                """.trimIndent()
-
-                textSize = 15f
-                setTextColor(Color.parseColor("#111827"))
-                setPadding(24, 20, 24, 20)
+            private fun formatPrice(raw: String): String {
+                return when {
+                    raw.contains("¥") -> raw
+                    raw.contains("元") -> raw
+                    else -> "¥$raw"
+                }
             }
-
-            card.addView(text)
-            container.addView(card)
         }
     }
 }
+

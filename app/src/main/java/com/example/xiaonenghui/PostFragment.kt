@@ -1,15 +1,30 @@
 package com.example.xiaonenghui
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.view.children
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class PostFragment : Fragment() {
+
+    private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+    private var selectedTime: Calendar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,35 +38,77 @@ class PostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val inputTitle = view.findViewById<TextInputEditText>(R.id.input_task_title)
-        val inputCategory = view.findViewById<TextInputEditText>(R.id.input_task_category)
         val inputPrice = view.findViewById<TextInputEditText>(R.id.input_task_price)
         val inputLocation = view.findViewById<TextInputEditText>(R.id.input_task_location)
+        val inputTime = view.findViewById<TextInputEditText>(R.id.input_task_time)
         val inputDescription = view.findViewById<TextInputEditText>(R.id.input_task_description)
-        val publishButton = view.findViewById<Button>(R.id.button_publish_task)
+        val publishButton = view.findViewById<MaterialButton>(R.id.button_publish_task)
+        val chipGroup = view.findViewById<ChipGroup>(R.id.chip_group_task_type)
+        val titleLayout = view.findViewById<TextInputLayout>(R.id.layout_task_title)
+        val priceLayout = view.findViewById<TextInputLayout>(R.id.layout_task_price)
+        val descriptionLayout = view.findViewById<TextInputLayout>(R.id.layout_task_description)
+        val timeLayout = view.findViewById<TextInputLayout>(R.id.layout_task_time)
+
+        updateChipStyles(chipGroup, chipGroup.checkedChipId)
+        chipGroup.setOnCheckedChangeListener { group, checkedId ->
+            updateChipStyles(group, checkedId)
+        }
+
+        val openDateTimePicker = {
+            showDateTimePicker(inputTime)
+        }
+        inputTime.setOnClickListener { openDateTimePicker() }
+        timeLayout.setEndIconOnClickListener { openDateTimePicker() }
+
+        val updatePublishState = {
+            val title = inputTitle.text.toString().trim()
+            val price = inputPrice.text.toString().trim()
+            val description = inputDescription.text.toString().trim()
+            val enabled = title.isNotEmpty() && price.isNotEmpty() && description.isNotEmpty()
+            publishButton.isEnabled = enabled
+            publishButton.alpha = if (enabled) 1f else 0.6f
+        }
+
+        inputTitle.doAfterTextChanged { updatePublishState() }
+        inputPrice.doAfterTextChanged { updatePublishState() }
+        inputDescription.doAfterTextChanged { updatePublishState() }
+        updatePublishState()
 
         publishButton.setOnClickListener {
             val title = inputTitle.text.toString().trim()
-            val category = inputCategory.text.toString().trim()
             val price = inputPrice.text.toString().trim()
             val location = inputLocation.text.toString().trim()
+            val time = inputTime.text.toString().trim()
             val description = inputDescription.text.toString().trim()
 
+            titleLayout.error = null
+            priceLayout.error = null
+            descriptionLayout.error = null
+
             if (title.isEmpty()) {
-                inputTitle.error = "任务标题不能为空"
+                titleLayout.error = "任务标题不能为空"
                 inputTitle.requestFocus()
                 return@setOnClickListener
             }
 
             if (price.isEmpty()) {
-                inputPrice.error = "预算金额不能为空"
+                priceLayout.error = "预算金额不能为空"
                 inputPrice.requestFocus()
                 return@setOnClickListener
             }
 
             if (description.isEmpty()) {
-                inputDescription.error = "任务描述不能为空"
+                descriptionLayout.error = "任务描述不能为空"
                 inputDescription.requestFocus()
                 return@setOnClickListener
+            }
+
+            val selectedChipText = chipGroup.findViewById<Chip>(chipGroup.checkedChipId)?.text
+            val category = selectedChipText?.toString()?.trim().orEmpty()
+            val mergedDescription = if (time.isNotEmpty()) {
+                "$description\n期望完成时间：$time"
+            } else {
+                description
             }
 
             val newTask = TaskItem(
@@ -59,7 +116,7 @@ class PostFragment : Fragment() {
                 category = if (category.isEmpty()) "其他" else category,
                 location = if (location.isEmpty()) "未填写地点" else location,
                 price = "${price}元",
-                description = description,
+                description = mergedDescription,
                 status = "待接单"
             )
 
@@ -70,9 +127,57 @@ class PostFragment : Fragment() {
             inputTitle.text?.clear()
             inputPrice.text?.clear()
             inputLocation.text?.clear()
+            inputTime.text?.clear()
             inputDescription.text?.clear()
 
+            selectedTime = null
+            updatePublishState()
+
             (activity as? MainActivity)?.selectBottomTab(R.id.nav_orders)
+        }
+    }
+
+    private fun showDateTimePicker(targetView: TextInputEditText) {
+        val now = selectedTime ?: Calendar.getInstance()
+        DatePickerDialog(
+            requireContext(),
+            { _, year, month, day ->
+                val selectedDate = (selectedTime ?: Calendar.getInstance()).apply {
+                    set(Calendar.YEAR, year)
+                    set(Calendar.MONTH, month)
+                    set(Calendar.DAY_OF_MONTH, day)
+                }
+                TimePickerDialog(
+                    requireContext(),
+                    { _, hour, minute ->
+                        selectedDate.set(Calendar.HOUR_OF_DAY, hour)
+                        selectedDate.set(Calendar.MINUTE, minute)
+                        selectedTime = selectedDate
+                        targetView.setText(dateTimeFormat.format(selectedDate.time))
+                    },
+                    now.get(Calendar.HOUR_OF_DAY),
+                    now.get(Calendar.MINUTE),
+                    true
+                ).show()
+            },
+            now.get(Calendar.YEAR),
+            now.get(Calendar.MONTH),
+            now.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+    private fun updateChipStyles(group: ChipGroup, checkedId: Int) {
+        val selectedBackground = ContextCompat.getColor(requireContext(), R.color.blue_primary)
+        val selectedText = ContextCompat.getColor(requireContext(), R.color.blue_on_primary)
+        val unselectedBackground = ContextCompat.getColor(requireContext(), R.color.chip_neutral)
+        val unselectedText = ContextCompat.getColor(requireContext(), R.color.blue_on_surface)
+
+        group.children.filterIsInstance<Chip>().forEach { chip ->
+            val isSelected = chip.id == checkedId
+            chip.chipBackgroundColor = ColorStateList.valueOf(
+                if (isSelected) selectedBackground else unselectedBackground
+            )
+            chip.setTextColor(if (isSelected) selectedText else unselectedText)
         }
     }
 }
