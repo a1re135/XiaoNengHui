@@ -91,4 +91,6 @@
     <string name="home_role_label">当前身份</string>
     <string name="home_role_requester">需求方</string>
     <string name="home_role_switch">切换为服务提供者</string>
+
+    <string name="home_task_detail">任务详情</string>
 </resources>

@@ -8,7 +8,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 
-class HomeTaskAdapter : RecyclerView.Adapter<HomeTaskAdapter.TaskViewHolder>() {
+class HomeTaskAdapter(
+    private val onItemClick: (TaskItem) -> Unit
+) : RecyclerView.Adapter<HomeTaskAdapter.TaskViewHolder>() {
 
     private val items = mutableListOf<TaskItem>()
 
@@ -25,7 +27,7 @@ class HomeTaskAdapter : RecyclerView.Adapter<HomeTaskAdapter.TaskViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], onItemClick)
     }
 
     override fun getItemCount(): Int = items.size
@@ -38,7 +40,7 @@ class HomeTaskAdapter : RecyclerView.Adapter<HomeTaskAdapter.TaskViewHolder>() {
         private val price = itemView.findViewById<TextView>(R.id.task_price)
         private val status = itemView.findViewById<TextView>(R.id.task_status)
 
-        fun bind(item: TaskItem) {
+        fun bind(item: TaskItem, onClick: (TaskItem) -> Unit) {
             icon.text = item.category.take(1)
             title.text = item.title
             tag.text = item.category
@@ -60,7 +62,10 @@ class HomeTaskAdapter : RecyclerView.Adapter<HomeTaskAdapter.TaskViewHolder>() {
                     status.setTextColor(ContextCompat.getColor(itemView.context, R.color.blue_on_surface))
                 }
             }
+
+            (itemView as MaterialCardView).setOnClickListener {
+                onClick(item)
+            }
         }
     }
 }
-

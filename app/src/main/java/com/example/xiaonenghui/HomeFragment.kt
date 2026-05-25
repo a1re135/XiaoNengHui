@@ -134,7 +134,9 @@ class HomeFragment : Fragment() {
 
     private fun setupTaskRecycler(view: View) {
         val recycler = view.findViewById<RecyclerView>(R.id.recycler_latest_tasks)
-        taskAdapter = HomeTaskAdapter()
+        taskAdapter = HomeTaskAdapter { task ->
+            showTaskDialog(task)
+        }
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = taskAdapter
     }
@@ -180,6 +182,26 @@ class HomeFragment : Fragment() {
             .setPositiveButton(getString(R.string.home_book_now)) { _, _ ->
                 Toast.makeText(requireContext(), getString(R.string.home_book_toast), Toast.LENGTH_SHORT).show()
             }
+            .show()
+    }
+
+    private fun showTaskDialog(task: TaskItem) {
+        val details = mutableListOf(
+            "任务标题：${task.title}",
+            "任务类型：${task.category}",
+            "地点：${task.location}",
+            "价格：${task.price}",
+            "状态：${task.status}"
+        )
+
+        if (task.description.isNotBlank()) {
+            details.add("任务描述：${task.description}")
+        }
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.home_task_detail))
+            .setMessage(details.joinToString("\n"))
+            .setNegativeButton(getString(R.string.home_close), null)
             .show()
     }
 
