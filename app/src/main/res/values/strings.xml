@@ -93,4 +93,51 @@
     <string name="home_role_switch">切换为服务提供者</string>
 
     <string name="home_task_detail">任务详情</string>
+
+    <string name="services_title">服务大厅</string>
+    <string name="services_search_hint">搜索服务、技能或关键词</string>
+    <string name="services_filter_all">全部</string>
+    <string name="services_filter_tutoring">技能辅导</string>
+    <string name="services_filter_creative">创意服务</string>
+    <string name="services_filter_errands">校园跑腿</string>
+    <string name="services_filter_programming">编程技术</string>
+
+    <string name="services_icon_math">数</string>
+    <string name="services_icon_ppt">P</string>
+    <string name="services_icon_debug">码</string>
+    <string name="services_icon_delivery">取</string>
+
+    <string name="services_card_math_title">高等数学辅导</string>
+    <string name="services_card_math_desc">擅长微积分与线性代数，期末复习冲刺辅导。</string>
+    <string name="services_card_math_provider">张同学</string>
+    <string name="services_provider_math_icon">张</string>
+    <string name="services_card_math_price">￥30/小时</string>
+
+    <string name="services_card_ppt_title">专业PPT制作</string>
+    <string name="services_card_ppt_desc">提供学术汇报、社团活动、商业计划书PPT美化服务。</string>
+    <string name="services_card_ppt_provider">李同学</string>
+    <string name="services_provider_ppt_icon">李</string>
+    <string name="services_card_ppt_price">￥20/份</string>
+
+    <string name="services_card_debug_title">代码调试与Debug</string>
+    <string name="services_card_debug_desc">精通Java/C++/Python，解决各类课设及代码报错问题。</string>
+    <string name="services_card_debug_provider">王同学</string>
+    <string name="services_provider_debug_icon">王</string>
+    <string name="services_card_debug_price">￥50/次</string>
+
+    <string name="services_card_delivery_title">代取快递-宿舍A区</string>
+    <string name="services_card_delivery_desc">A区快递点代取，送到楼下，准时高效。</string>
+    <string name="services_card_delivery_provider">赵同学</string>
+    <string name="services_provider_delivery_icon">赵</string>
+    <string name="services_card_delivery_price">￥5/件</string>
+
+    <string name="services_rating_49">4.9</string>
+    <string name="services_rating_50">5.0</string>
+    <string name="services_rating_48">4.8</string>
+    <string name="services_rating_47">4.7</string>
+    <string name="services_book_now">立即预约</string>
+    <string name="services_search_toast">搜索：%1$s</string>
+    <string name="services_filter_toast">筛选：%1$s</string>
+    <string name="services_card_toast">查看服务：%1$s</string>
+    <string name="services_book_toast">已选择预约：%1$s</string>
 </resources>
