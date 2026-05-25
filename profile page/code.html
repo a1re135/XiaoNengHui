@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>个人中心 - Campus SkillHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface-variant": "#424754",
+                      "surface-bright": "#f8f9ff",
+                      "surface": "#f8f9ff",
+                      "primary": "#0058be",
+                      "on-tertiary-container": "#fffbff",
+                      "on-primary-fixed": "#001a42",
+                      "secondary-fixed-dim": "#4edea3",
+                      "tertiary": "#825100",
+                      "on-tertiary-fixed-variant": "#653e00",
+                      "on-surface": "#0b1c30",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-primary-fixed-variant": "#004395",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-container": "#a36700",
+                      "secondary": "#006c49",
+                      "outline": "#727785",
+                      "inverse-surface": "#213145",
+                      "surface-tint": "#005ac2",
+                      "surface-container-low": "#eff4ff",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-secondary-container": "#00714d",
+                      "on-error": "#ffffff",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#ffddb8",
+                      "primary-container": "#2170e4",
+                      "error": "#ba1a1a",
+                      "secondary-container": "#6cf8bb",
+                      "on-primary": "#ffffff",
+                      "surface-dim": "#cbdbf5",
+                      "on-tertiary-fixed": "#2a1700",
+                      "inverse-on-surface": "#eaf1ff",
+                      "inverse-primary": "#adc6ff",
+                      "surface-container-highest": "#d3e4fe",
+                      "primary-fixed": "#d8e2ff",
+                      "on-primary-container": "#fefcff",
+                      "surface-container": "#e5eeff",
+                      "on-background": "#0b1c30",
+                      "surface-variant": "#d3e4fe",
+                      "outline-variant": "#c2c6d6",
+                      "on-secondary-fixed": "#002113",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#ffb95f",
+                      "on-error-container": "#93000a",
+                      "background": "#f8f9ff",
+                      "surface-container-high": "#dce9ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "24px",
+                      "margin-mobile": "16px",
+                      "gutter": "16px",
+                      "margin-tablet": "24px",
+                      "stack-sm": "8px",
+                      "stack-md": "16px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-lg": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col antialiased">
+<!-- TopAppBar (Hidden on mobile per instructions, but requirements ask for a top bar titled 个人中心. We'll render a specific page header instead of the shared TopAppBar to match the prompt's structural request while obeying the JSON's desktop-only topappbar mandate if interpreted strictly, but wait, JSON says TopAppBar is "docked full-width top-0" and responsive rules say TopAppBar is full nav on web. I will create a custom mobile header for this specific view as requested by "Header: Top bar titled '个人中心'" to avoid conflict.) -->
+<header class="sticky top-0 z-40 bg-surface text-on-surface shadow-sm h-16 flex items-center justify-center px-margin-mobile">
+<h1 class="font-headline-sm text-headline-sm font-semibold">个人中心</h1>
+</header>
+<main class="flex-1 pb-24 overflow-y-auto px-margin-mobile py-stack-md space-y-stack-md max-w-md mx-auto w-full">
+<!-- User Profile Card -->
+<section class="bg-surface-container-lowest rounded-xl p-4 shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex items-center gap-4 relative overflow-hidden">
+<!-- Background decorative gradient -->
+<div class="absolute -right-12 -top-12 w-32 h-32 bg-primary-fixed rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+<img alt="User Profile Placeholder" class="w-16 h-16 rounded-full object-cover border-2 border-surface-container-high z-10 shrink-0" data-alt="A close-up studio portrait of a young male student, softly lit to create a warm, modern, and approachable aesthetic. The image uses a clean, light color palette with subtle blue undertones to match a professional, academic campus setting. The background is a smooth, solid light gray, ensuring the subject stands out clearly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApjyarkOYW4dCTZ4SdKy41Eut8ZGhDdPSchsBRS5u-3Wet3-4i0c0ZzRmJa1SICmsJPk88i0xzaBxI7pH_LADqY49TRMAWn0RKKFgSthpk50A4eBCO1ujQD_SLoI-9ko7OgjJWj83qerCZQKgrdK2yLqMqzy9p1SRiwkZhA5kAvEFyOzkWlfF9fwbwj7-eg29zKQABusfauKPtzLxAjbQVQ1MQ0ekrBHBiw77T_w-Ek6jZU2pdnG7_oNPR8raYRp8pjAe-o_m_QlQ"/>
+<div class="z-10 flex-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">张同学</h2>
+<div class="flex flex-col mt-1 gap-1">
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">badge</span> 202100123
+                    </p>
+<p class="font-label-md text-label-md text-primary bg-primary-fixed/30 w-fit px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">person</span> 当前身份：需求方
+                    </p>
+</div>
+</div>
+<button class="z-10 text-on-surface-variant p-2 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</section>
+<!-- Role Switch Card -->
+<section class="bg-primary-container text-on-primary-container rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col gap-3">
+<div class="absolute right-0 bottom-0 opacity-10 pointer-events-none text-9xl leading-none">
+<span class="material-symbols-outlined transform rotate-12 scale-150">sync</span>
+</div>
+<p class="font-body-md text-body-md z-10">你可以在需求方和服务提供者之间自由切换，体验完整的校能生态。</p>
+<button class="bg-surface-container-lowest text-primary font-label-lg text-label-lg py-2.5 px-4 rounded-lg self-start shadow-sm hover:bg-surface-bright transition-colors active:scale-95 flex items-center gap-2 z-10">
+<span class="material-symbols-outlined">swap_horiz</span>
+                 切换身份
+             </button>
+</section>
+<!-- Stats Row -->
+<section class="bg-surface-container-lowest rounded-xl p-4 shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex justify-around items-center divide-x divide-outline-variant/30">
+<div class="flex flex-col items-center flex-1 px-2">
+<span class="font-label-md text-label-md text-on-surface-variant mb-1">信用等级</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-md text-headline-md text-secondary">A</span>
+</div>
+</div>
+<div class="flex flex-col items-center flex-1 px-2">
+<span class="font-label-md text-label-md text-on-surface-variant mb-1">服务评分</span>
+<div class="flex items-baseline gap-1 text-tertiary">
+<span class="font-headline-md text-headline-md">4.8</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="flex flex-col items-center flex-1 px-2">
+<span class="font-label-md text-label-md text-on-surface-variant mb-1">完成订单</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-md text-headline-md text-on-surface">12</span>
+</div>
+</div>
+</section>
+<!-- Menu List -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="flex flex-col divide-y divide-outline-variant/20">
+<button class="flex items-center w-full px-4 py-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="bg-primary-fixed/50 p-2 rounded-lg text-primary mr-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[20px]">publish</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface flex-1 text-left">我的发布</span>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="flex items-center w-full px-4 py-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="bg-tertiary-fixed/50 p-2 rounded-lg text-tertiary mr-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface flex-1 text-left">我的收藏</span>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="flex items-center w-full px-4 py-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="bg-secondary-fixed/50 p-2 rounded-lg text-secondary mr-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface flex-1 text-left">信用评价</span>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="flex items-center w-full px-4 py-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="bg-surface-variant p-2 rounded-lg text-primary mr-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface flex-1 text-left">帮助与反馈</span>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="flex items-center w-full px-4 py-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="bg-surface-variant p-2 rounded-lg text-primary mr-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[20px]">info</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface flex-1 text-left">关于校能汇</span>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Logout Button -->
+<button class="w-full mt-4 bg-error-container text-on-error-container font-label-lg text-label-lg py-3 rounded-lg shadow-sm hover:bg-error/20 transition-colors active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">logout</span>
+            退出登录
+        </button>
+</main>
+<!-- BottomNavBar generated from Shared Components JSON -->
+<nav class="bg-surface-container-lowest dark:bg-inverse-surface shadow-[0_-4px_12px_rgba(0,0,0,0.05)] docked full-width bottom-0 rounded-t-xl fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-3 md:hidden">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 transition-all duration-200 px-2 py-1 rounded-xl">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm mt-1">首页</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 transition-all duration-200 px-2 py-1 rounded-xl">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label-sm text-label-sm mt-1">服务</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 transition-all duration-200 px-2 py-1 rounded-xl">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-sm text-label-sm mt-1">发布</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90 transition-all duration-200 px-2 py-1 rounded-xl">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-sm text-label-sm mt-1">订单</span>
+</button>
+<!-- Active Tab: 我的 (Profile) -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 hover:bg-surface-container-high transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm mt-1">我的</span>
+</button>
+</nav>
+</body></html>

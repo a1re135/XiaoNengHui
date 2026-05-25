@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>我的订单 - SkillHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e5eeff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-secondary-fixed": "#002113",
+                    "tertiary": "#825100",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#00714d",
+                    "primary": "#0058be",
+                    "on-secondary-fixed-variant": "#005236",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#a36700",
+                    "surface-dim": "#cbdbf5",
+                    "tertiary-fixed": "#ffddb8",
+                    "surface-container-high": "#dce9ff",
+                    "error-container": "#ffdad6",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface-variant": "#d3e4fe",
+                    "error": "#ba1a1a",
+                    "background": "#f8f9ff",
+                    "on-primary-container": "#fefcff",
+                    "secondary": "#006c49",
+                    "surface-container-low": "#eff4ff",
+                    "on-background": "#0b1c30",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "inverse-primary": "#adc6ff",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "outline-variant": "#c2c6d6",
+                    "primary-fixed": "#d8e2ff",
+                    "surface": "#f8f9ff",
+                    "on-primary-fixed-variant": "#004395",
+                    "secondary-container": "#6cf8bb",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-tertiary-fixed": "#2a1700",
+                    "on-tertiary-container": "#fffbff",
+                    "on-secondary": "#ffffff",
+                    "on-surface-variant": "#424754",
+                    "on-primary-fixed": "#001a42",
+                    "outline": "#727785",
+                    "on-surface": "#0b1c30",
+                    "surface-tint": "#005ac2",
+                    "primary-container": "#2170e4",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#213145"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-tablet": "24px",
+                    "stack-sm": "8px",
+                    "stack-lg": "24px",
+                    "margin-mobile": "16px",
+                    "stack-md": "16px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Tonal Layers & Ambient Shadows */
+        .elevation-1 {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .elevation-2 {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+        /* Custom scrollbar for filter bar */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-sans antialiased pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-background docked full-width top-0 bg-surface-container-low dark:bg-surface-container-low flat no shadows flex justify-between items-center w-full px-margin-mobile h-14 z-50 fixed">
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors active:opacity-80 active:scale-95 duration-150 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed-dim">校能汇 SkillHub</h1>
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors active:opacity-80 active:scale-95 duration-150 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="pt-[72px] px-margin-mobile flex flex-col gap-stack-lg max-w-2xl mx-auto">
+<!-- Page Header -->
+<section class="flex flex-col gap-stack-sm mt-4">
+<h2 class="font-headline-md text-headline-md text-on-surface">我的订单</h2>
+</section>
+<!-- Filter Tabs -->
+<nav class="flex overflow-x-auto hide-scrollbar gap-stack-sm pb-2 border-b border-outline-variant/30">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg transition-colors shadow-sm">全部</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-variant font-label-lg text-label-lg transition-colors">待接单</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-variant font-label-lg text-label-lg transition-colors">进行中</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-variant font-label-lg text-label-lg transition-colors">已完成</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-variant font-label-lg text-label-lg transition-colors">已取消</button>
+</nav>
+<!-- Orders List -->
+<div class="flex flex-col gap-stack-md">
+<!-- Order Card: Pending -->
+<article class="bg-surface-container-lowest rounded-[16px] p-4 elevation-1 flex flex-col gap-stack-md transition-all hover:elevation-2 border border-surface-container-low">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-[#FFF8E1] text-[#FF8F00] font-label-sm text-label-sm rounded-full">待接单</span>
+<span class="text-outline font-label-sm text-label-sm">2023-10-27 14:30</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1">代取快递 - 宿舍A区</h3>
+<span class="inline-flex items-center px-2 py-1 bg-surface-container text-on-surface-variant font-label-md text-label-md rounded-full w-fit mt-1">校园跑腿</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary">¥5</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md">宿舍A区 丰巢柜</span>
+</div>
+<div class="flex justify-end mt-2 pt-4 border-t border-surface-container-low">
+<button class="px-4 py-2 border border-outline-variant text-on-surface-variant font-label-lg text-label-lg rounded-lg hover:bg-surface-container transition-colors">取消订单</button>
+</div>
+</article>
+<!-- Order Card: In Progress -->
+<article class="bg-surface-container-lowest rounded-[16px] p-4 elevation-1 flex flex-col gap-stack-md transition-all hover:elevation-2 border border-surface-container-low">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-[#E3F2FD] text-[#1976D2] font-label-sm text-label-sm rounded-full">进行中</span>
+<span class="text-outline font-label-sm text-label-sm">2023-10-26 09:15</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1">Python编程辅导 1小时</h3>
+<span class="inline-flex items-center px-2 py-1 bg-surface-container text-on-surface-variant font-label-md text-label-md rounded-full w-fit mt-1">技能辅导</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary">¥45</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md">图书馆 2楼讨论室</span>
+</div>
+<div class="flex justify-end mt-2 pt-4 border-t border-surface-container-low">
+<button class="px-4 py-2 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:bg-primary/90 transition-colors shadow-sm">查看进度</button>
+</div>
+</article>
+<!-- Order Card: Completed -->
+<article class="bg-surface-container-lowest rounded-[16px] p-4 elevation-1 flex flex-col gap-stack-md transition-all hover:elevation-2 border border-surface-container-low opacity-90">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-[#E8F5E9] text-[#388E3C] font-label-sm text-label-sm rounded-full">已完成</span>
+<span class="text-outline font-label-sm text-label-sm">2023-10-25 18:00</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1">二手教材代买 - 高数下</h3>
+<span class="inline-flex items-center px-2 py-1 bg-surface-container text-on-surface-variant font-label-md text-label-md rounded-full w-fit mt-1">闲置交易</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary">¥15</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md">教学楼A区 一层大厅</span>
+</div>
+<div class="flex justify-end mt-2 pt-4 border-t border-surface-container-low gap-3">
+<button class="px-4 py-2 border border-outline-variant text-on-surface-variant font-label-lg text-label-lg rounded-lg hover:bg-surface-container transition-colors">再来一单</button>
+<button class="px-4 py-2 border border-secondary text-secondary font-label-lg text-label-lg rounded-lg hover:bg-secondary-container/20 transition-colors">评价服务</button>
+</div>
+</article>
+<!-- Order Card: Cancelled -->
+<article class="bg-surface-container-lowest rounded-[16px] p-4 elevation-1 flex flex-col gap-stack-md transition-all hover:elevation-2 border border-surface-container-low opacity-75">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm rounded-full">已取消</span>
+<span class="text-outline font-label-sm text-label-sm">2023-10-24 10:00</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1 text-on-surface-variant">占座服务 - 考研自习室</h3>
+<span class="inline-flex items-center px-2 py-1 bg-surface-container text-on-surface-variant font-label-md text-label-md rounded-full w-fit mt-1">校园服务</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-outline">¥10</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md text-outline">第四教学楼 402</span>
+</div>
+<div class="flex justify-end mt-2 pt-4 border-t border-surface-container-low">
+<button class="px-4 py-2 border border-outline-variant text-on-surface-variant font-label-lg text-label-lg rounded-lg hover:bg-surface-container transition-colors">删除订单</button>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface dark:bg-inverse-surface docked full-width bottom-0 rounded-t-xl shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shadow-lg fixed left-0 w-full z-50 flex justify-around items-center px-2 py-3 md:hidden">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all font-label-sm-mobile text-label-sm-mobile group">
+<span class="material-symbols-outlined mb-1 transition-transform group-active:scale-90 duration-200" data-icon="home">home</span>
+<span>首页</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all font-label-sm-mobile text-label-sm-mobile group">
+<span class="material-symbols-outlined mb-1 transition-transform group-active:scale-90 duration-200" data-icon="apps">apps</span>
+<span>服务</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all font-label-sm-mobile text-label-sm-mobile group">
+<span class="material-symbols-outlined mb-1 transition-transform group-active:scale-90 duration-200" data-icon="add_circle">add_circle</span>
+<span>发布</span>
+</button>
+<!-- Active Tab: 订单 -->
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container rounded-2xl px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all active:scale-90 duration-200 font-label-sm-mobile text-label-sm-mobile group">
+<span class="material-symbols-outlined mb-1" data-icon="receipt_long" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span>订单</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all font-label-sm-mobile text-label-sm-mobile group">
+<span class="material-symbols-outlined mb-1 transition-transform group-active:scale-90 duration-200" data-icon="person">person</span>
+<span>我的</span>
+</button>
+</nav>
+<script>
+        // Simple script to handle filter tab active state visually
+        document.querySelectorAll('nav.overflow-x-auto button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active classes from all tabs
+                document.querySelectorAll('nav.overflow-x-auto button').forEach(btn => {
+                    btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'shadow-sm');
+                    btn.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+                });
+                
+                // Add active classes to clicked tab
+                this.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+                this.classList.add('bg-primary-container', 'text-on-primary-container', 'shadow-sm');
+            });
+        });
+    </script>
+</body></html>
