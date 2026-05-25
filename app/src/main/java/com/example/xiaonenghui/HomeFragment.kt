@@ -1,20 +1,19 @@
 package com.example.xiaonenghui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 
 class HomeFragment : Fragment() {
-    private var visibleTaskCount = 2;
+    private var visibleTaskCount = 2
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,29 +89,40 @@ class HomeFragment : Fragment() {
         container.removeAllViews()
 
         val latestTasks = AppDataStore.tasks.take(visibleTaskCount)
+        val inflater = LayoutInflater.from(requireContext())
 
         for (task in latestTasks) {
-            val card = MaterialCardView(requireContext()).apply {
-                radius = 18f
-                cardElevation = 3f
-                setCardBackgroundColor(Color.WHITE)
+            val card = inflater.inflate(R.layout.item_home_task, container, false) as MaterialCardView
 
-                val params = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                params.setMargins(0, 12, 0, 0)
-                layoutParams = params
+            val icon = card.findViewById<TextView>(R.id.task_icon)
+            val title = card.findViewById<TextView>(R.id.task_title)
+            val tag = card.findViewById<TextView>(R.id.task_tag)
+            val time = card.findViewById<TextView>(R.id.task_time)
+            val price = card.findViewById<TextView>(R.id.task_price)
+            val status = card.findViewById<TextView>(R.id.task_status)
+
+            icon.text = task.category.take(1)
+            title.text = task.title
+            tag.text = task.category
+            time.text = task.location
+            price.text = task.price
+            status.text = task.status
+
+            when (task.status) {
+                "待接单" -> {
+                    status.setBackgroundResource(R.drawable.bg_chip_warning)
+                    status.setTextColor(ContextCompat.getColor(requireContext(), R.color.tertiary_amber))
+                }
+                "进行中" -> {
+                    status.setBackgroundResource(R.drawable.bg_chip_success)
+                    status.setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_green))
+                }
+                else -> {
+                    status.setBackgroundResource(R.drawable.bg_chip_neutral)
+                    status.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
+                }
             }
 
-            val text = TextView(requireContext()).apply {
-                text = "${task.title}\n${task.category} | ${task.location} | ${task.price} | ${task.status}"
-                textSize = 15f
-                setTextColor(Color.parseColor("#111827"))
-                setPadding(24, 20, 24, 20)
-            }
-
-            card.addView(text)
             container.addView(card)
         }
 
