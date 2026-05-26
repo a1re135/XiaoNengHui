@@ -2,19 +2,16 @@ package com.example.xiaonenghui
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.text.SimpleDateFormat
@@ -43,15 +40,25 @@ class PostFragment : Fragment() {
         val inputTime = view.findViewById<TextInputEditText>(R.id.input_task_time)
         val inputDescription = view.findViewById<TextInputEditText>(R.id.input_task_description)
         val publishButton = view.findViewById<MaterialButton>(R.id.button_publish_task)
-        val chipGroup = view.findViewById<ChipGroup>(R.id.chip_group_task_type)
         val titleLayout = view.findViewById<TextInputLayout>(R.id.layout_task_title)
         val priceLayout = view.findViewById<TextInputLayout>(R.id.layout_task_price)
         val descriptionLayout = view.findViewById<TextInputLayout>(R.id.layout_task_description)
         val timeLayout = view.findViewById<TextInputLayout>(R.id.layout_task_time)
 
-        updateChipStyles(chipGroup, chipGroup.checkedChipId)
-        chipGroup.setOnCheckedChangeListener { group, checkedId ->
-            updateChipStyles(group, checkedId)
+        val typeTutor = view.findViewById<TextView>(R.id.chip_type_tutor)
+        val typeCreative = view.findViewById<TextView>(R.id.chip_type_creative)
+        val typeErrand = view.findViewById<TextView>(R.id.chip_type_errand)
+        val typePrint = view.findViewById<TextView>(R.id.chip_type_print)
+        val typeOther = view.findViewById<TextView>(R.id.chip_type_other)
+        val typeViews = listOf(typeTutor, typeCreative, typeErrand, typePrint, typeOther)
+        var selectedTypeView: TextView = typeCreative
+
+        updateTypeSelection(typeViews, selectedTypeView)
+        typeViews.forEach { textView ->
+            textView.setOnClickListener {
+                selectedTypeView = textView
+                updateTypeSelection(typeViews, selectedTypeView)
+            }
         }
 
         val openDateTimePicker = {
@@ -103,8 +110,7 @@ class PostFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val selectedChipText = chipGroup.findViewById<Chip>(chipGroup.checkedChipId)?.text
-            val category = selectedChipText?.toString()?.trim().orEmpty()
+            val category = selectedTypeView.text?.toString()?.trim().orEmpty()
             val mergedDescription = if (time.isNotEmpty()) {
                 "$description\n期望完成时间：$time"
             } else {
@@ -166,18 +172,16 @@ class PostFragment : Fragment() {
         ).show()
     }
 
-    private fun updateChipStyles(group: ChipGroup, checkedId: Int) {
-        val selectedBackground = ContextCompat.getColor(requireContext(), R.color.blue_primary)
-        val selectedText = ContextCompat.getColor(requireContext(), R.color.blue_on_primary)
-        val unselectedBackground = ContextCompat.getColor(requireContext(), R.color.chip_neutral)
+    private fun updateTypeSelection(typeViews: List<TextView>, selectedView: TextView) {
+        val selectedBackground = R.drawable.bg_circle_primary
+        val selectedText = ContextCompat.getColor(requireContext(), R.color.blue_primary)
+        val unselectedBackground = R.drawable.bg_chip_neutral
         val unselectedText = ContextCompat.getColor(requireContext(), R.color.blue_on_surface)
 
-        group.children.filterIsInstance<Chip>().forEach { chip ->
-            val isSelected = chip.id == checkedId
-            chip.chipBackgroundColor = ColorStateList.valueOf(
-                if (isSelected) selectedBackground else unselectedBackground
-            )
-            chip.setTextColor(if (isSelected) selectedText else unselectedText)
+        typeViews.forEach { textView ->
+            val isSelected = textView.id == selectedView.id
+            textView.setBackgroundResource(if (isSelected) selectedBackground else unselectedBackground)
+            textView.setTextColor(if (isSelected) selectedText else unselectedText)
         }
     }
 }
