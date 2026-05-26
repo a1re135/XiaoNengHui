@@ -117,16 +117,19 @@ class PostFragment : Fragment() {
                 description
             }
 
-            val newTask = TaskItem(
+            val newService = ServiceItem(
                 title = title,
                 category = if (category.isEmpty()) "其他" else category,
-                location = if (location.isEmpty()) "未填写地点" else location,
+                provider = "发布者",
                 price = "${price}元",
+                rating = "新",
                 description = mergedDescription,
-                status = "待接单"
+                location = if (location.isEmpty()) "未填写地点" else location,
+                schedule = if (time.isEmpty()) "待商议" else time
             )
 
-            AppDataStore.tasks.add(0, newTask)
+            AppDataStore.latestPostedService = newService
+            AppDataStore.services.add(0, newService)
 
             Toast.makeText(requireContext(), "任务发布成功", Toast.LENGTH_SHORT).show()
 
@@ -139,7 +142,7 @@ class PostFragment : Fragment() {
             selectedTime = null
             updatePublishState()
 
-            (activity as? MainActivity)?.selectBottomTab(R.id.nav_orders)
+            (activity as? MainActivity)?.selectBottomTab(R.id.nav_services)
         }
     }
 

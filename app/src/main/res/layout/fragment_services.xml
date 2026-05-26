@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -201,6 +201,20 @@
                     android:paddingEnd="14dp"
                     android:paddingBottom="8dp"
                     android:text="@string/services_filter_programming"
+                    android:textColor="@color/blue_on_surface"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chip_other"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_chip_neutral"
+                    android:paddingStart="14dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/services_filter_other"
                     android:textColor="@color/blue_on_surface"
                     android:textSize="12sp" />
             </LinearLayout>

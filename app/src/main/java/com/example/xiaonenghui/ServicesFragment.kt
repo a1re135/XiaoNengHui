@@ -50,13 +50,42 @@ class ServicesFragment : Fragment() {
         val chipCreative = view.findViewById<TextView>(R.id.chip_creative)
         val chipErrands = view.findViewById<TextView>(R.id.chip_errands)
         val chipProgramming = view.findViewById<TextView>(R.id.chip_programming)
+        val chipOther = view.findViewById<TextView>(R.id.chip_other)
 
-        chips = listOf(chipAll, chipTutoring, chipCreative, chipErrands, chipProgramming)
+        chips = listOf(chipAll, chipTutoring, chipCreative, chipErrands, chipProgramming, chipOther)
 
-        val mathService = findService("数学", fallbackMathService())
-        val pptService = findService("PPT", fallbackPptService())
-        val debugService = findService("代码", fallbackDebugService())
-        val deliveryService = findService("快递", fallbackDeliveryService())
+        val latestPosted = AppDataStore.latestPostedService
+        val overrideSlot = when {
+            latestPosted == null -> null
+            latestPosted.category.contains("创意") -> "ppt"
+            latestPosted.category.contains("跑腿") -> "delivery"
+            latestPosted.category.contains("编程") -> "debug"
+            else -> "math"
+        }
+
+        val mathService = if (overrideSlot == "math") {
+            latestPosted
+        } else {
+            findService("数学", fallbackMathService())
+        } ?: fallbackMathService()
+
+        val pptService = if (overrideSlot == "ppt") {
+            latestPosted
+        } else {
+            findService("PPT", fallbackPptService())
+        } ?: fallbackPptService()
+
+        val debugService = if (overrideSlot == "debug") {
+            latestPosted
+        } else {
+            findService("代码", fallbackDebugService())
+        } ?: fallbackDebugService()
+
+        val deliveryService = if (overrideSlot == "delivery") {
+            latestPosted
+        } else {
+            findService("快递", fallbackDeliveryService())
+        } ?: fallbackDeliveryService()
 
         serviceCards = listOf(
             ServiceCardBinding(
@@ -117,6 +146,10 @@ class ServicesFragment : Fragment() {
 
         chipProgramming.setOnClickListener {
             selectCategory("编程技术", chipProgramming)
+        }
+
+        chipOther.setOnClickListener {
+            selectCategory("其他", chipOther)
         }
 
         serviceCards.forEach { binding ->

@@ -32,6 +32,7 @@ data class OrderItem(
 object AppDataStore {
 
     var currentRole = "需求方"
+    var latestPostedService: ServiceItem? = null
 
     val orders = mutableListOf<OrderItem>()
 
