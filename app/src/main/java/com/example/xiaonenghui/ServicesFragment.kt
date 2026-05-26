@@ -15,7 +15,9 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ServicesFragment : Fragment() {
-
+    private var lastToastMessage = ""
+    private var lastToastTime = 0L
+    private var currentToast: Toast? = null
     private var currentCategory = "全部"
     private var currentKeyword = ""
 
@@ -86,6 +88,7 @@ class ServicesFragment : Fragment() {
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 submitSearch(searchInput.text.toString())
+                searchInput.clearFocus()
                 true
             } else {
                 false
@@ -130,18 +133,14 @@ class ServicesFragment : Fragment() {
     }
 
     private fun submitSearch(rawKeyword: String) {
-        currentKeyword = rawKeyword.trim()
-
-        if (currentKeyword.isEmpty()) {
-            Toast.makeText(requireContext(), "请输入搜索关键词", Toast.LENGTH_SHORT).show()
-            renderServices()
+        val keyword = rawKeyword.trim()
+        currentKeyword = keyword
+        val visibleCount = renderServices()
+        if (keyword.isEmpty()) {
             return
         }
-
-        val visibleCount = renderServices()
-
         if (visibleCount == 0) {
-            Toast.makeText(requireContext(), "没有找到相关服务", Toast.LENGTH_SHORT).show()
+            showSingleToast("未找到相关服务")
         }
     }
 
@@ -342,5 +341,20 @@ class ServicesFragment : Fragment() {
                 (activity as? MainActivity)?.selectBottomTab(R.id.nav_orders)
             }
             .show()
+    }
+
+    private fun showSingleToast(message: String) {
+        val now = System.currentTimeMillis()
+
+        if (message == lastToastMessage && now - lastToastTime < 800) {
+            return
+        }
+
+        lastToastMessage = message
+        lastToastTime = now
+
+        currentToast?.cancel()
+        currentToast = Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT)
+        currentToast?.show()
     }
 }
