@@ -20,9 +20,20 @@ data class TaskItem(
     val description: String = ""
 )
 
+data class OrderItem(
+    val title: String,
+    val category: String,
+    val provider: String,
+    val price: String,
+    val status: String = "进行中",
+    val description: String = ""
+)
+
 object AppDataStore {
 
     var currentRole = "需求方"
+
+    val orders = mutableListOf<OrderItem>()
 
     val services = mutableListOf(
         ServiceItem(
@@ -54,6 +65,16 @@ object AppDataStore {
             description = "快速代取，校内送达",
             location = "快递站",
             schedule = "当天 18:00 前"
+        ),
+        ServiceItem(
+            title = "Java代码调试",
+            category = "编程技术",
+            provider = "陈同学",
+            price = "25元/次",
+            rating = "4.8",
+            description = "帮助检查 Java / Kotlin 作业代码错误，并讲解修改思路",
+            location = "线上 / 图书馆",
+            schedule = "周二/四 18:00 后"
         )
     )
 
