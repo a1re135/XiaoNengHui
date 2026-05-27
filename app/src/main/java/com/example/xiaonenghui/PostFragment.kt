@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -46,6 +47,7 @@ class PostFragment : Fragment() {
         val locationLayout = view.findViewById<TextInputLayout>(R.id.layout_task_location)
         val descriptionLayout = view.findViewById<TextInputLayout>(R.id.layout_task_description)
         val timeLayout = view.findViewById<TextInputLayout>(R.id.layout_task_time)
+        val notificationButton = view.findViewById<View>(R.id.button_post_notifications)
 
         val typeTutor = view.findViewById<TextView>(R.id.chip_type_tutor)
         val typeCreative = view.findViewById<TextView>(R.id.chip_type_creative)
@@ -87,6 +89,10 @@ class PostFragment : Fragment() {
         inputTime.doAfterTextChanged { updatePublishState() }
         inputDescription.doAfterTextChanged { updatePublishState() }
         updatePublishState()
+
+        notificationButton.setOnClickListener {
+            showNotifications()
+        }
 
         publishButton.setOnClickListener {
             val title = inputTitle.text.toString().trim()
@@ -206,5 +212,26 @@ class PostFragment : Fragment() {
             textView.setBackgroundResource(if (isSelected) selectedBackground else unselectedBackground)
             textView.setTextColor(if (isSelected) selectedText else unselectedText)
         }
+    }
+
+    private fun showNotifications() {
+        val pendingTasks = AppDataStore.tasks.filter {
+            it.status.contains("待")
+        }
+
+        val message = if (pendingTasks.isEmpty()) {
+            "暂无新的通知"
+        } else {
+            "你有 ${pendingTasks.size} 个新任务待处理：\n" +
+                pendingTasks.take(3).joinToString("\n") {
+                    "• ${it.title} - ${it.status}"
+                }
+        }
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("通知")
+            .setMessage(message)
+            .setPositiveButton("关闭", null)
+            .show()
     }
 }
