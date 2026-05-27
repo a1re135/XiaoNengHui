@@ -38,10 +38,12 @@ class PostFragment : Fragment() {
         val inputPrice = view.findViewById<TextInputEditText>(R.id.input_task_price)
         val inputLocation = view.findViewById<TextInputEditText>(R.id.input_task_location)
         val inputTime = view.findViewById<TextInputEditText>(R.id.input_task_time)
+        val inputSchedule = view.findViewById<TextInputEditText>(R.id.input_task_schedule)
         val inputDescription = view.findViewById<TextInputEditText>(R.id.input_task_description)
         val publishButton = view.findViewById<MaterialButton>(R.id.button_publish_task)
         val titleLayout = view.findViewById<TextInputLayout>(R.id.layout_task_title)
         val priceLayout = view.findViewById<TextInputLayout>(R.id.layout_task_price)
+        val locationLayout = view.findViewById<TextInputLayout>(R.id.layout_task_location)
         val descriptionLayout = view.findViewById<TextInputLayout>(R.id.layout_task_description)
         val timeLayout = view.findViewById<TextInputLayout>(R.id.layout_task_time)
 
@@ -70,14 +72,19 @@ class PostFragment : Fragment() {
         val updatePublishState = {
             val title = inputTitle.text.toString().trim()
             val price = inputPrice.text.toString().trim()
+            val location = inputLocation.text.toString().trim()
+            val time = inputTime.text.toString().trim()
             val description = inputDescription.text.toString().trim()
-            val enabled = title.isNotEmpty() && price.isNotEmpty() && description.isNotEmpty()
+            val enabled =
+                title.isNotEmpty() && price.isNotEmpty() && location.isNotEmpty() && time.isNotEmpty() && description.isNotEmpty()
             publishButton.isEnabled = enabled
             publishButton.alpha = if (enabled) 1f else 0.6f
         }
 
         inputTitle.doAfterTextChanged { updatePublishState() }
         inputPrice.doAfterTextChanged { updatePublishState() }
+        inputLocation.doAfterTextChanged { updatePublishState() }
+        inputTime.doAfterTextChanged { updatePublishState() }
         inputDescription.doAfterTextChanged { updatePublishState() }
         updatePublishState()
 
@@ -86,10 +93,13 @@ class PostFragment : Fragment() {
             val price = inputPrice.text.toString().trim()
             val location = inputLocation.text.toString().trim()
             val time = inputTime.text.toString().trim()
+            val schedule = inputSchedule.text.toString().trim()
             val description = inputDescription.text.toString().trim()
 
             titleLayout.error = null
             priceLayout.error = null
+            locationLayout.error = null
+            timeLayout.error = null
             descriptionLayout.error = null
 
             if (title.isEmpty()) {
@@ -104,6 +114,18 @@ class PostFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            if (location.isEmpty()) {
+                locationLayout.error = "任务地点不能为空"
+                inputLocation.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (time.isEmpty()) {
+                timeLayout.error = "期望完成时间不能为空"
+                inputTime.requestFocus()
+                return@setOnClickListener
+            }
+
             if (description.isEmpty()) {
                 descriptionLayout.error = "任务描述不能为空"
                 inputDescription.requestFocus()
@@ -111,11 +133,8 @@ class PostFragment : Fragment() {
             }
 
             val category = selectedTypeView.text?.toString()?.trim().orEmpty()
-            val mergedDescription = if (time.isNotEmpty()) {
-                "$description\n期望完成时间：$time"
-            } else {
-                description
-            }
+            val mergedDescription = description
+            val finalSchedule = schedule.ifEmpty { time }
 
             val newService = ServiceItem(
                 title = title,
@@ -124,8 +143,8 @@ class PostFragment : Fragment() {
                 price = "${price}元",
                 rating = "新",
                 description = mergedDescription,
-                location = if (location.isEmpty()) "未填写地点" else location,
-                schedule = if (time.isEmpty()) "待商议" else time
+                location = location,
+                schedule = finalSchedule
             )
 
             AppDataStore.latestPostedService = newService
@@ -137,6 +156,7 @@ class PostFragment : Fragment() {
             inputPrice.text?.clear()
             inputLocation.text?.clear()
             inputTime.text?.clear()
+            inputSchedule.text?.clear()
             inputDescription.text?.clear()
 
             selectedTime = null
