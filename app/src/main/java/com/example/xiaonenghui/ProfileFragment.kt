@@ -34,6 +34,9 @@ class ProfileFragment : Fragment() {
         val menuHelp = view.findViewById<View>(R.id.menu_help)
         val menuAbout = view.findViewById<View>(R.id.menu_about)
 
+        val schoolButton = view.findViewById<View>(R.id.button_profile_school)
+        val notificationButton = view.findViewById<View>(R.id.button_profile_notifications)
+
         val statCredit = view.findViewById<View>(R.id.stat_credit)
         val statRating = view.findViewById<View>(R.id.stat_rating)
         val statOrders = view.findViewById<View>(R.id.stat_orders)
@@ -67,6 +70,14 @@ class ProfileFragment : Fragment() {
         statCredit.setOnClickListener { showToast(getString(R.string.profile_toast_credit_stat)) }
         statRating.setOnClickListener { showToast(getString(R.string.profile_toast_rating_stat)) }
         statOrders.setOnClickListener { showToast(getString(R.string.profile_toast_orders_stat)) }
+
+        schoolButton.setOnClickListener {
+            (activity as? MainActivity)?.selectBottomTab(R.id.nav_home)
+        }
+
+        notificationButton.setOnClickListener {
+            showToast(getString(R.string.home_no_notifications))
+        }
 
         logoutButton.setOnClickListener {
             (activity as? MainActivity)?.logout()

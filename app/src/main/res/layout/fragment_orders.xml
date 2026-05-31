@@ -4,16 +4,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue_background"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/orders_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/surface_container_low"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <FrameLayout
+            android:id="@+id/button_orders_school"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_circle_white"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="返回首页"
+                android:src="@drawable/ic_school_24"
+                app:tint="@color/blue_primary" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/orders_brand"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="校能汇 SkillHub"
+            android:textColor="@color/blue_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/button_orders_notifications"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_circle_white"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="订单通知"
+                android:src="@drawable/notification_bell"
+                app:tint="@color/blue_primary" />
+        </FrameLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/orders_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="我的订单"
         android:textColor="@color/blue_on_surface"
-        android:textSize="22sp"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
     <HorizontalScrollView
@@ -21,6 +81,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:overScrollMode="never"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -37,7 +99,8 @@
                 android:layout_marginEnd="8dp"
                 android:minHeight="36dp"
                 android:text="全部"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:cornerRadius="18dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/filter_pending"
@@ -47,7 +110,8 @@
                 android:layout_marginEnd="8dp"
                 android:minHeight="36dp"
                 android:text="待接单"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:cornerRadius="18dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/filter_in_progress"
@@ -57,7 +121,8 @@
                 android:layout_marginEnd="8dp"
                 android:minHeight="36dp"
                 android:text="进行中"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:cornerRadius="18dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/filter_completed"
@@ -67,7 +132,8 @@
                 android:layout_marginEnd="8dp"
                 android:minHeight="36dp"
                 android:text="已完成"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:cornerRadius="18dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/filter_cancelled"
@@ -76,26 +142,48 @@
                 android:layout_height="wrap_content"
                 android:minHeight="36dp"
                 android:text="已取消"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:cornerRadius="18dp" />
         </LinearLayout>
     </HorizontalScrollView>
+
+    <View
+        android:id="@+id/orders_filter_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="16dp"
+        android:alpha="0.3"
+        android:background="@color/outline_variant" />
 
     <TextView
         android:id="@+id/orders_empty_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="暂无订单，去发布一个任务吧"
         android:textColor="@color/blue_on_surface"
         android:textSize="14sp"
         android:visibility="gone" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/orders_list"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/orders_refresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="12dp" />
+        android:layout_marginTop="12dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/orders_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

@@ -34,6 +34,7 @@
     <color name="surface_container_low">#FFEFF4FF</color>
     <color name="surface_container">#FFE5EEFF</color>
     <color name="surface_container_high">#FFDCE9FF</color>
+    <color name="outline">#FF727785</color>
     <color name="outline_variant">#FFC2C6D6</color>
 
     <color name="secondary_green">#FF10B981</color>
@@ -44,5 +45,7 @@
     <color name="chip_neutral">#FFE2E8F0</color>
     <color name="chip_success">#FFD1FAE5</color>
     <color name="chip_warning">#FFFEF3C7</color>
+    <color name="chip_info">#FFE3F2FD</color>
+    <color name="info_blue">#FF1976D2</color>
     <color name="circle_neutral">#FFE5E7EB</color>
 </resources>

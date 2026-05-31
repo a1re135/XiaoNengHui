@@ -4,112 +4,126 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
+    app:cardBackgroundColor="@color/surface_container_lowest"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardElevation="4dp"
     app:strokeColor="@color/outline_variant"
     app:strokeWidth="1dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/order_status_badge"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_chip_warning"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="4dp"
-            android:text="待接单"
-            android:textColor="@color/tertiary_amber"
-            android:textSize="11sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/order_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="刚刚"
-            android:textColor="@color/outline_variant"
-            android:textSize="11sp"
-            app:layout_constraintBaseline_toBaselineOf="@id/order_status_badge"
-            app:layout_constraintStart_toEndOf="@id/order_status_badge" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/order_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="¥0"
-            android:textColor="@color/blue_primary"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/order_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="订单标题"
-            android:textColor="@color/blue_on_surface"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/order_status_badge" />
+                    <TextView
+                        android:id="@+id/order_status_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_warning"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:text="待接单"
+                        android:textColor="@color/tertiary_amber"
+                        android:textSize="11sp" />
 
-        <TextView
-            android:id="@+id/order_category_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_chip_neutral"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="4dp"
-            android:text="校园跑腿"
-            android:textColor="@color/blue_on_surface"
-            android:textSize="11sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/order_title" />
+                    <TextView
+                        android:id="@+id/order_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="刚刚"
+                        android:textColor="@color/outline"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/order_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:maxLines="2"
+                    android:text="订单标题"
+                    android:textColor="@color/blue_on_surface"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/order_category_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_chip_neutral"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:text="校园跑腿"
+                    android:textColor="@color/blue_on_surface"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/order_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¥0"
+                android:textColor="@color/blue_primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/order_location"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="地点："
-            android:textColor="@color/blue_on_surface"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/order_category_chip" />
+            android:layout_marginTop="10dp"
+            android:drawablePadding="6dp"
+            android:drawableStart="@drawable/ic_location_16"
+            android:text="地点"
+            android:textColor="@color/outline"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/order_description"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="描述"
             android:textColor="@color/blue_on_surface"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/order_location" />
+            android:textSize="12sp" />
+
+        <View
+            android:id="@+id/order_action_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:alpha="0.3"
+            android:background="@color/outline_variant" />
 
         <LinearLayout
             android:id="@+id/order_actions"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:gravity="end"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/order_description">
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/order_action_secondary"
@@ -119,7 +133,8 @@
                 android:layout_marginEnd="8dp"
                 android:minHeight="36dp"
                 android:text="再来一单"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:cornerRadius="12dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/order_action_primary"
@@ -128,9 +143,10 @@
                 android:layout_height="wrap_content"
                 android:minHeight="36dp"
                 android:text="评价服务"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:cornerRadius="12dp" />
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
 

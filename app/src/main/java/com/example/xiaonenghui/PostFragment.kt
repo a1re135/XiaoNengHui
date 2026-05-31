@@ -48,6 +48,7 @@ class PostFragment : Fragment() {
         val descriptionLayout = view.findViewById<TextInputLayout>(R.id.layout_task_description)
         val timeLayout = view.findViewById<TextInputLayout>(R.id.layout_task_time)
         val notificationButton = view.findViewById<View>(R.id.button_post_notifications)
+        val schoolButton = view.findViewById<View>(R.id.button_post_school)
 
         val typeTutor = view.findViewById<TextView>(R.id.chip_type_tutor)
         val typeCreative = view.findViewById<TextView>(R.id.chip_type_creative)
@@ -92,6 +93,10 @@ class PostFragment : Fragment() {
 
         notificationButton.setOnClickListener {
             showNotifications()
+        }
+
+        schoolButton.setOnClickListener {
+            (activity as? MainActivity)?.selectBottomTab(R.id.nav_home)
         }
 
         publishButton.setOnClickListener {

@@ -51,7 +51,8 @@ class ServicesFragment : Fragment() {
 
         val searchInput = view.findViewById<EditText>(R.id.input_search_services)
         val searchButton = view.findViewById<View>(R.id.button_search_services)
-        val notificationButton = view.findViewById<View>(R.id.button_notifications)
+        val notificationButton = view.findViewById<View>(R.id.button_services_notifications)
+        val schoolButton = view.findViewById<View>(R.id.button_services_school)
 
         servicesListContainer = view.findViewById(R.id.services_list_container)
 
@@ -136,6 +137,10 @@ class ServicesFragment : Fragment() {
 
         notificationButton.setOnClickListener {
             showNotifications()
+        }
+
+        schoolButton.setOnClickListener {
+            (activity as? MainActivity)?.selectBottomTab(R.id.nav_home)
         }
 
         chipAll.setOnClickListener {
