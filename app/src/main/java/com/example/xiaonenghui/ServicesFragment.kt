@@ -407,17 +407,18 @@ class ServicesFragment : Fragment() {
             )
             .setNegativeButton("取消", null)
             .setPositiveButton("确认预约") { _, _ ->
-                val newTask = TaskItem(
+                val newOrder = OrderItem(
                     title = service.title,
                     category = service.category,
-                    location = if (service.location.isBlank()) "线上" else service.location,
+                    provider = service.provider,
                     price = service.price,
                     status = "待接单",
                     description = service.description,
+                    location = if (service.location.isBlank()) "线上" else service.location,
                     sourceServiceKey = serviceKey(service)
                 )
 
-                AppDataStore.tasks.add(0, newTask)
+                AppDataStore.orders.add(0, newOrder)
                 AppDataStore.bookedServiceKeys.add(serviceKey(service))
 
                 updateBookingStateForAll()

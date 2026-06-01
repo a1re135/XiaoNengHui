@@ -26,8 +26,10 @@ data class OrderItem(
     val category: String,
     val provider: String,
     val price: String,
-    val status: String = "进行中",
-    val description: String = ""
+    val status: String = "待接单",
+    val description: String = "",
+    val location: String = "",
+    val sourceServiceKey: String = ""
 )
 
 object AppDataStore {

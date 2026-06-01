@@ -39,14 +39,14 @@ class OrdersFragment : Fragment() {
         val buttonNotifications = view.findViewById<View>(R.id.button_orders_notifications)
 
         ordersAdapter = OrdersAdapter(
-            onCardClick = { task ->
-                Toast.makeText(requireContext(), "订单：${task.title}", Toast.LENGTH_SHORT).show()
+            onCardClick = { order ->
+                Toast.makeText(requireContext(), "订单：${order.title}", Toast.LENGTH_SHORT).show()
             },
-            onPrimaryAction = { task, action ->
-                handleOrderAction(task, action)
+            onPrimaryAction = { order, action ->
+                handleOrderAction(order, action)
             },
-            onSecondaryAction = { task, action ->
-                handleOrderAction(task, action)
+            onSecondaryAction = { order, action ->
+                handleOrderAction(order, action)
             }
         )
 
@@ -91,6 +91,11 @@ class OrdersFragment : Fragment() {
         applyFilter(OrderFilter.ALL, filters.keys, emptyText)
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshOrders()
+    }
+
     private fun applyFilter(
         filter: OrderFilter,
         buttons: Collection<MaterialButton>,
@@ -100,8 +105,8 @@ class OrdersFragment : Fragment() {
         updateFilterButtons(filter, buttons)
 
         val filtered = when (filter) {
-            OrderFilter.ALL -> AppDataStore.tasks.toList()
-            else -> AppDataStore.tasks.filter { it.status == filter.status }
+            OrderFilter.ALL -> AppDataStore.orders.toList()
+            else -> AppDataStore.orders.filter { it.status == filter.status }
         }
 
         ordersAdapter.submitList(filtered)
@@ -134,11 +139,11 @@ class OrdersFragment : Fragment() {
         }
     }
 
-    private fun handleOrderAction(task: TaskItem, action: OrderAction) {
+    private fun handleOrderAction(order: OrderItem, action: OrderAction) {
         when (action) {
             OrderAction.CANCEL -> {
-                releaseBookedService(task)
-                updateTaskStatus(task, "已取消")
+                releaseBookedService(order)
+                updateOrderStatus(order, "已取消")
                 Toast.makeText(requireContext(), "已取消订单", Toast.LENGTH_SHORT).show()
             }
             OrderAction.PROGRESS -> {
@@ -151,8 +156,8 @@ class OrdersFragment : Fragment() {
                 Toast.makeText(requireContext(), "进入评价", Toast.LENGTH_SHORT).show()
             }
             OrderAction.DELETE -> {
-                releaseBookedService(task)
-                AppDataStore.tasks.remove(task)
+                releaseBookedService(order)
+                AppDataStore.orders.remove(order)
                 Toast.makeText(requireContext(), "已删除订单", Toast.LENGTH_SHORT).show()
             }
             OrderAction.CONTACT -> {
@@ -160,6 +165,23 @@ class OrdersFragment : Fragment() {
             }
         }
 
+        refreshOrders()
+    }
+
+    private fun updateOrderStatus(order: OrderItem, newStatus: String) {
+        val index = AppDataStore.orders.indexOfFirst { it == order }
+        if (index != -1) {
+            AppDataStore.orders[index] = order.copy(status = newStatus)
+        }
+    }
+
+    private fun releaseBookedService(order: OrderItem) {
+        if (order.sourceServiceKey.isNotBlank()) {
+            AppDataStore.bookedServiceKeys.remove(order.sourceServiceKey)
+        }
+    }
+
+    private fun refreshOrders() {
         view?.findViewById<TextView>(R.id.orders_empty_text)?.let { emptyText ->
             val buttons = listOfNotNull(
                 view?.findViewById(R.id.filter_all),
@@ -172,22 +194,9 @@ class OrdersFragment : Fragment() {
         }
     }
 
-    private fun updateTaskStatus(task: TaskItem, newStatus: String) {
-        val index = AppDataStore.tasks.indexOfFirst { it == task }
-        if (index != -1) {
-            AppDataStore.tasks[index] = task.copy(status = newStatus)
-        }
-    }
-
-    private fun releaseBookedService(task: TaskItem) {
-        if (task.sourceServiceKey.isNotBlank()) {
-            AppDataStore.bookedServiceKeys.remove(task.sourceServiceKey)
-        }
-    }
-
     private fun showOrderNotifications() {
-        val pending = AppDataStore.tasks.filter { it.status == "待接单" }
-        val inProgress = AppDataStore.tasks.filter { it.status == "进行中" }
+        val pending = AppDataStore.orders.filter { it.status == "待接单" }
+        val inProgress = AppDataStore.orders.filter { it.status == "进行中" }
 
         if (pending.isEmpty() && inProgress.isEmpty()) {
             MaterialAlertDialogBuilder(requireContext())
@@ -239,14 +248,14 @@ class OrdersFragment : Fragment() {
     }
 
     private class OrdersAdapter(
-        private val onCardClick: (TaskItem) -> Unit,
-        private val onPrimaryAction: (TaskItem, OrderAction) -> Unit,
-        private val onSecondaryAction: (TaskItem, OrderAction) -> Unit
+        private val onCardClick: (OrderItem) -> Unit,
+        private val onPrimaryAction: (OrderItem, OrderAction) -> Unit,
+        private val onSecondaryAction: (OrderItem, OrderAction) -> Unit
     ) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
 
-        private val items = mutableListOf<TaskItem>()
+        private val items = mutableListOf<OrderItem>()
 
-        fun submitList(newItems: List<TaskItem>) {
+        fun submitList(newItems: List<OrderItem>) {
             items.clear()
             items.addAll(newItems)
             notifyDataSetChanged()
@@ -276,10 +285,10 @@ class OrdersFragment : Fragment() {
             private val secondaryAction = itemView.findViewById<MaterialButton>(R.id.order_action_secondary)
 
             fun bind(
-                item: TaskItem,
-                onCardClick: (TaskItem) -> Unit,
-                onPrimaryAction: (TaskItem, OrderAction) -> Unit,
-                onSecondaryAction: (TaskItem, OrderAction) -> Unit
+                item: OrderItem,
+                onCardClick: (OrderItem) -> Unit,
+                onPrimaryAction: (OrderItem, OrderAction) -> Unit,
+                onSecondaryAction: (OrderItem, OrderAction) -> Unit
             ) {
                 statusBadge.text = item.status
                 title.text = item.title
