@@ -40,7 +40,7 @@ class OrdersFragment : Fragment() {
 
         ordersAdapter = OrdersAdapter(
             onCardClick = { order ->
-                Toast.makeText(requireContext(), "订单：${order.title}", Toast.LENGTH_SHORT).show()
+                showOrderDetail(order)
             },
             onPrimaryAction = { order, action ->
                 handleOrderAction(order, action)
@@ -399,5 +399,23 @@ class OrdersFragment : Fragment() {
                 return (value * itemView.resources.displayMetrics.density).toInt()
             }
         }
+    }
+    private fun showOrderDetail(order: OrderItem) {
+        val message = """
+        类型：${order.category}
+        提供者：${order.provider}
+        价格：${order.price}
+        状态：${order.status}
+        地点：${order.location}
+        
+        订单说明：
+        ${order.description}
+    """.trimIndent()
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(order.title)
+            .setMessage(message)
+            .setPositiveButton("关闭", null)
+            .show()
     }
 }
