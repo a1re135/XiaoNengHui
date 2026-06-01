@@ -137,6 +137,7 @@ class OrdersFragment : Fragment() {
     private fun handleOrderAction(task: TaskItem, action: OrderAction) {
         when (action) {
             OrderAction.CANCEL -> {
+                releaseBookedService(task)
                 updateTaskStatus(task, "已取消")
                 Toast.makeText(requireContext(), "已取消订单", Toast.LENGTH_SHORT).show()
             }
@@ -150,6 +151,7 @@ class OrdersFragment : Fragment() {
                 Toast.makeText(requireContext(), "进入评价", Toast.LENGTH_SHORT).show()
             }
             OrderAction.DELETE -> {
+                releaseBookedService(task)
                 AppDataStore.tasks.remove(task)
                 Toast.makeText(requireContext(), "已删除订单", Toast.LENGTH_SHORT).show()
             }
@@ -174,6 +176,12 @@ class OrdersFragment : Fragment() {
         val index = AppDataStore.tasks.indexOfFirst { it == task }
         if (index != -1) {
             AppDataStore.tasks[index] = task.copy(status = newStatus)
+        }
+    }
+
+    private fun releaseBookedService(task: TaskItem) {
+        if (task.sourceServiceKey.isNotBlank()) {
+            AppDataStore.bookedServiceKeys.remove(task.sourceServiceKey)
         }
     }
 
@@ -384,4 +392,3 @@ class OrdersFragment : Fragment() {
         }
     }
 }
-

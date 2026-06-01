@@ -127,7 +127,6 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/order_action_secondary"
-                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -138,7 +137,6 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/order_action_primary"
-                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="36dp"

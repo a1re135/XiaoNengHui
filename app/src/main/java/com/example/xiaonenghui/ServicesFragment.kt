@@ -16,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.color.MaterialColors
 import android.graphics.Typeface
 import android.widget.LinearLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 class ServicesFragment : Fragment() {
     private var lastToastMessage = ""
@@ -53,6 +54,7 @@ class ServicesFragment : Fragment() {
         val searchButton = view.findViewById<View>(R.id.button_search_services)
         val notificationButton = view.findViewById<View>(R.id.button_services_notifications)
         val schoolButton = view.findViewById<View>(R.id.button_services_school)
+        val refreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.services_refresh)
 
         servicesListContainer = view.findViewById(R.id.services_list_container)
 
@@ -64,6 +66,15 @@ class ServicesFragment : Fragment() {
         val chipOther = view.findViewById<TextView>(R.id.chip_other)
 
         chips = listOf(chipAll, chipTutoring, chipCreative, chipErrands, chipProgramming, chipOther)
+
+        refreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(requireContext(), R.color.blue_primary)
+        )
+        refreshLayout.setOnRefreshListener {
+            refreshPostedServiceCards()
+            refreshLayout.isRefreshing = false
+            showSingleToast("已更新服务")
+        }
 
         val latestPosted = AppDataStore.latestPostedService
         val overrideSlot = when {
@@ -179,6 +190,7 @@ class ServicesFragment : Fragment() {
 
         selectCategory("全部", chipAll)
         refreshPostedServiceCards()
+        updateBookingStateForAll()
     }
     override fun onResume() {
         super.onResume()
@@ -186,6 +198,7 @@ class ServicesFragment : Fragment() {
         if (::servicesListContainer.isInitialized) {
             refreshPostedServiceCards()
         }
+        updateBookingStateForAll()
     }
     private fun submitSearch(rawKeyword: String) {
         val keyword = rawKeyword.trim()
@@ -274,14 +287,24 @@ class ServicesFragment : Fragment() {
             service.description
         )
 
+        val alreadyBooked = isServiceBooked(service)
+        val positiveLabel = if (alreadyBooked) "已预约" else "立即预约"
+
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(service.title)
             .setMessage(lines.joinToString("\n"))
             .setNegativeButton("关闭", null)
-            .setPositiveButton("立即预约") { _, _ ->
-                bookService(service)
+            .setPositiveButton(positiveLabel) { _, _ ->
+                if (!alreadyBooked) {
+                    bookService(service)
+                }
             }
             .show()
+            .apply {
+                if (alreadyBooked) {
+                    getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
+                }
+            }
     }
 
     private fun showNotifications() {
@@ -366,6 +389,11 @@ class ServicesFragment : Fragment() {
     }
 
     private fun bookService(service: ServiceItem) {
+        if (isServiceBooked(service)) {
+            showSingleToast("该服务已预约")
+            return
+        }
+
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("确认预约")
             .setMessage(
@@ -379,17 +407,20 @@ class ServicesFragment : Fragment() {
             )
             .setNegativeButton("取消", null)
             .setPositiveButton("确认预约") { _, _ ->
-
-                val newOrder = OrderItem(
+                val newTask = TaskItem(
                     title = service.title,
                     category = service.category,
-                    provider = service.provider,
+                    location = if (service.location.isBlank()) "线上" else service.location,
                     price = service.price,
-                    status = "进行中",
-                    description = service.description
+                    status = "待接单",
+                    description = service.description,
+                    sourceServiceKey = serviceKey(service)
                 )
 
-                AppDataStore.orders.add(0, newOrder)
+                AppDataStore.tasks.add(0, newTask)
+                AppDataStore.bookedServiceKeys.add(serviceKey(service))
+
+                updateBookingStateForAll()
 
                 Toast.makeText(requireContext(), "预约成功，已加入我的订单", Toast.LENGTH_SHORT).show()
 
@@ -437,6 +468,7 @@ class ServicesFragment : Fragment() {
         }
 
         renderServices()
+        updateBookingStateForAll()
     }
     private fun createPostedServiceCard(service: ServiceItem): MaterialCardView {
         val categoryStyle = resolveCategoryStyle(service.category)
@@ -632,6 +664,8 @@ class ServicesFragment : Fragment() {
             bookService(service)
         }
 
+        applyBookingState(binding)
+
         return card
     }
 
@@ -677,5 +711,40 @@ class ServicesFragment : Fragment() {
     }
     private fun dp(value: Int): Int {
         return (value * resources.displayMetrics.density).toInt()
+    }
+
+    private fun updateBookingStateForAll() {
+        serviceCards.forEach { binding ->
+            applyBookingState(binding)
+        }
+    }
+
+    private fun applyBookingState(binding: ServiceCardBinding) {
+        val booked = isServiceBooked(binding.service)
+        val button = binding.bookButton
+
+        if (booked) {
+            button.text = "已预约"
+            button.isEnabled = false
+            button.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.surface_container_high)
+            button.setTextColor(ContextCompat.getColor(requireContext(), R.color.outline))
+            button.strokeWidth = dp(1)
+            button.strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.outline_variant)
+        } else {
+            button.text = getString(R.string.services_book_now)
+            button.isEnabled = true
+            button.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.blue_primary)
+            button.strokeWidth = 0
+            button.strokeColor = null
+            button.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_primary))
+        }
+    }
+
+    private fun isServiceBooked(service: ServiceItem): Boolean {
+        return AppDataStore.bookedServiceKeys.contains(serviceKey(service))
+    }
+
+    private fun serviceKey(service: ServiceItem): String {
+        return "${service.title}::${service.provider}"
     }
 }

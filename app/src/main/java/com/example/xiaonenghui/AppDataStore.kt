@@ -17,7 +17,8 @@ data class TaskItem(
     val location: String,
     val price: String,
     val status: String = "待接单",
-    val description: String = ""
+    val description: String = "",
+    val sourceServiceKey: String = ""
 )
 
 data class OrderItem(
@@ -35,6 +36,7 @@ object AppDataStore {
     var latestPostedService: ServiceItem? = null
 
     val orders = mutableListOf<OrderItem>()
+    val bookedServiceKeys = mutableSetOf<String>()
 
     val services = mutableListOf(
         ServiceItem(
@@ -86,7 +88,8 @@ object AppDataStore {
             location = "快递站",
             price = "8元",
             status = "待接单",
-            description = "帮我从快递站取一个小包裹"
+            description = "帮我从快递站取一个小包裹",
+            sourceServiceKey = ""
         ),
         TaskItem(
             title = "PPT美化",
@@ -94,7 +97,8 @@ object AppDataStore {
             location = "线上",
             price = "30元",
             status = "进行中",
-            description = "帮我美化课程展示PPT"
+            description = "帮我美化课程展示PPT",
+            sourceServiceKey = ""
         )
     )
 }
