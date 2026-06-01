@@ -145,6 +145,8 @@
     <string name="profile_title">个人中心</string>
     <string name="profile_name">张同学</string>
     <string name="profile_student_id">学号 202100123</string>
+    <string name="profile_student_id_value">学号 %1$s</string>
+    <string name="profile_current_role_value">当前身份：%1$s</string>
     <string name="profile_avatar_text">张</string>
     <string name="profile_role_requester">需求方</string>
     <string name="profile_role_provider">服务提供者</string>
