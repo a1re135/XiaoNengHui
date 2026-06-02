@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class OrdersFragment : Fragment() {
@@ -42,6 +43,7 @@ class OrdersFragment : Fragment() {
         val refreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.orders_refresh)
         val buttonSchool = view.findViewById<View>(R.id.button_orders_school)
         val buttonNotifications = view.findViewById<View>(R.id.button_orders_notifications)
+        val modeToggleGroup = view.findViewById<MaterialButtonToggleGroup>(R.id.order_mode_toggle_group)
 
         val btnRequester = view.findViewById<MaterialButton>(R.id.btn_mode_requester)
         val btnProvider = view.findViewById<MaterialButton>(R.id.btn_mode_provider)
@@ -73,14 +75,13 @@ class OrdersFragment : Fragment() {
             button.setOnClickListener { applyFilter(filter, filters.keys, emptyText) }
         }
 
-        btnRequester.setOnClickListener {
-            currentMode = OrderMode.REQUESTER
-            updateModeButtons(btnRequester, btnProvider)
-            applyFilter(currentFilter, filters.keys, emptyText)
-        }
+        modeToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
 
-        btnProvider.setOnClickListener {
-            currentMode = OrderMode.PROVIDER
+            currentMode = when (checkedId) {
+                R.id.btn_mode_provider -> OrderMode.PROVIDER
+                else -> OrderMode.REQUESTER
+            }
             updateModeButtons(btnRequester, btnProvider)
             applyFilter(currentFilter, filters.keys, emptyText)
         }
@@ -103,21 +104,13 @@ class OrdersFragment : Fragment() {
         }
 
         updateModeButtons(btnRequester, btnProvider)
+        modeToggleGroup.check(if (currentMode == OrderMode.REQUESTER) R.id.btn_mode_requester else R.id.btn_mode_provider)
         applyFilter(OrderFilter.ALL, filters.keys, emptyText)
     }
 
     private fun updateModeButtons(requester: MaterialButton, provider: MaterialButton) {
-        if (currentMode == OrderMode.REQUESTER) {
-            requester.setBackgroundResource(R.drawable.bg_chip_success)
-            requester.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_primary))
-            provider.setBackgroundResource(R.drawable.bg_chip_neutral)
-            provider.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
-        } else {
-            provider.setBackgroundResource(R.drawable.bg_chip_success)
-            provider.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_primary))
-            requester.setBackgroundResource(R.drawable.bg_chip_neutral)
-            requester.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
-        }
+        requester.isChecked = currentMode == OrderMode.REQUESTER
+        provider.isChecked = currentMode == OrderMode.PROVIDER
     }
 
     override fun onResume() {

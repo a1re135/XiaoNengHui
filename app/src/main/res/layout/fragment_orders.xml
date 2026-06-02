@@ -76,34 +76,46 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <LinearLayout
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/order_mode_toggle_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
+        android:paddingHorizontal="16dp"
+        app:checkedButton="@id/btn_mode_requester"
+        app:selectionRequired="true"
+        app:singleSelection="true">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_mode_requester"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:minHeight="40dp"
             android:text="我是需求方"
             android:textSize="12sp"
-            app:cornerRadius="12dp" />
+            app:backgroundTint="@color/orders_mode_button_background"
+            app:cornerRadius="12dp"
+            app:strokeColor="@color/outline_variant"
+            app:strokeWidth="1dp"
+            android:textColor="@color/orders_mode_button_text" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_mode_provider"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
+            android:minHeight="40dp"
             android:text="我是服务提供者"
             android:textSize="12sp"
-            app:cornerRadius="12dp" />
-    </LinearLayout>
+            app:backgroundTint="@color/orders_mode_button_background"
+            app:cornerRadius="12dp"
+            app:strokeColor="@color/outline_variant"
+            app:strokeWidth="1dp"
+            android:textColor="@color/orders_mode_button_text" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <HorizontalScrollView
         android:layout_width="match_parent"
