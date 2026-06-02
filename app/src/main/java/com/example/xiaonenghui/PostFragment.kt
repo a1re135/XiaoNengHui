@@ -32,6 +32,18 @@ class PostFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_post, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkRoleRestriction()
+    }
+
+    private fun checkRoleRestriction() {
+        if (AppDataStore.currentRole == "需求方") {
+            Toast.makeText(requireContext(), "请先切换为服务提供者再发布任务", Toast.LENGTH_SHORT).show()
+            (activity as? MainActivity)?.selectBottomTab(R.id.nav_home)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -104,7 +116,6 @@ class PostFragment : Fragment() {
             val price = inputPrice.text.toString().trim()
             val location = inputLocation.text.toString().trim()
             val time = inputTime.text.toString().trim()
-            val schedule = inputSchedule.text.toString().trim()
             val description = inputDescription.text.toString().trim()
 
             titleLayout.error = null
@@ -143,23 +154,26 @@ class PostFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val category = selectedTypeView.text?.toString()?.trim().orEmpty()
-            val mergedDescription = description
-            val finalSchedule = schedule.ifEmpty { time }
+            if (AppDataStore.currentRole == "需求方") {
+                Toast.makeText(requireContext(), "请先切换为服务提供者再发布任务", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-            val newService = ServiceItem(
+            val category = selectedTypeView.text?.toString()?.trim().orEmpty()
+            val finalCategory = category.ifEmpty { "其他" }
+
+            val newTask = TaskItem(
                 title = title,
-                category = if (category.isEmpty()) "其他" else category,
-                provider = "发布者",
-                price = "${price}元",
-                rating = "新",
-                description = mergedDescription,
+                category = finalCategory,
                 location = location,
-                schedule = finalSchedule
+                price = "${price}元",
+                status = "待接单",
+                description = description,
+                time = time,
+                isPostedByMe = true
             )
 
-            AppDataStore.latestPostedService = newService
-            AppDataStore.services.add(0, newService)
+            AppDataStore.tasks.add(0, newTask)
 
             Toast.makeText(requireContext(), "任务发布成功", Toast.LENGTH_SHORT).show()
 
@@ -173,7 +187,7 @@ class PostFragment : Fragment() {
             selectedTime = null
             updatePublishState()
 
-            (activity as? MainActivity)?.selectBottomTab(R.id.nav_services)
+            (activity as? MainActivity)?.selectBottomTab(R.id.nav_home)
         }
     }
 
@@ -220,18 +234,7 @@ class PostFragment : Fragment() {
     }
 
     private fun showNotifications() {
-        val pendingTasks = AppDataStore.tasks.filter {
-            it.status.contains("待")
-        }
-
-        val message = if (pendingTasks.isEmpty()) {
-            "暂无新的通知"
-        } else {
-            "你有 ${pendingTasks.size} 个新任务待处理：\n" +
-                pendingTasks.take(3).joinToString("\n") {
-                    "• ${it.title} - ${it.status}"
-                }
-        }
+        val message = AppDataStore.getNotificationMessage()
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("通知")

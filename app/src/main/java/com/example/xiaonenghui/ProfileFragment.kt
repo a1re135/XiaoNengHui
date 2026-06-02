@@ -101,7 +101,12 @@ class ProfileFragment : Fragment() {
         }
 
         notificationButton.setOnClickListener {
-            Toast.makeText(requireContext(), "暂无新的通知", Toast.LENGTH_SHORT).show()
+            val message = AppDataStore.getNotificationMessage()
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("通知")
+                .setMessage(message)
+                .setPositiveButton("知道了", null)
+                .show()
         }
 
         refreshUi()
@@ -137,16 +142,16 @@ class ProfileFragment : Fragment() {
     }
 
     private fun countPublishedItems(): Int {
-        return AppDataStore.services.count { it.provider == "发布者" }
+        return AppDataStore.tasks.count { it.isPostedByMe }
     }
 
     private fun showMyPostsDialog() {
-        val myPosts = AppDataStore.services.filter { it.provider == "发布者" }
+        val myPosts = AppDataStore.tasks.filter { it.isPostedByMe }
         val message = if (myPosts.isEmpty()) {
             "暂无发布内容"
         } else {
             myPosts.joinToString("\n\n") { item ->
-                "标题：${item.title}\n分类：${item.category}\n价格：${item.price}\n地点：${item.location.ifBlank { "未填写" }}"
+                "标题：${item.title}\n分类：${item.category}\n价格：${item.price}\n地点：${item.location.ifBlank { "未填写" }}\n状态：${item.status}"
             }
         }
 

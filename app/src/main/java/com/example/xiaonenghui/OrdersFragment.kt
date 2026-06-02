@@ -20,6 +20,11 @@ class OrdersFragment : Fragment() {
 
     private lateinit var ordersAdapter: OrdersAdapter
     private var currentFilter = OrderFilter.ALL
+    private var currentMode = OrderMode.REQUESTER
+
+    private enum class OrderMode {
+        REQUESTER, PROVIDER
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,16 +43,13 @@ class OrdersFragment : Fragment() {
         val buttonSchool = view.findViewById<View>(R.id.button_orders_school)
         val buttonNotifications = view.findViewById<View>(R.id.button_orders_notifications)
 
+        val btnRequester = view.findViewById<MaterialButton>(R.id.btn_mode_requester)
+        val btnProvider = view.findViewById<MaterialButton>(R.id.btn_mode_provider)
+
         ordersAdapter = OrdersAdapter(
-            onCardClick = { order ->
-                showOrderDetail(order)
-            },
-            onPrimaryAction = { order, action ->
-                handleOrderAction(order, action)
-            },
-            onSecondaryAction = { order, action ->
-                handleOrderAction(order, action)
-            }
+            mode = currentMode,
+            onCardClick = { item -> showOrderDetail(item) },
+            onAction = { item, action -> handleAction(item, action) }
         )
 
         ordersList.layoutManager = LinearLayoutManager(requireContext())
@@ -71,13 +73,25 @@ class OrdersFragment : Fragment() {
             button.setOnClickListener { applyFilter(filter, filters.keys, emptyText) }
         }
 
+        btnRequester.setOnClickListener {
+            currentMode = OrderMode.REQUESTER
+            updateModeButtons(btnRequester, btnProvider)
+            applyFilter(currentFilter, filters.keys, emptyText)
+        }
+
+        btnProvider.setOnClickListener {
+            currentMode = OrderMode.PROVIDER
+            updateModeButtons(btnRequester, btnProvider)
+            applyFilter(currentFilter, filters.keys, emptyText)
+        }
+
         refreshLayout.setColorSchemeColors(
             ContextCompat.getColor(requireContext(), R.color.blue_primary)
         )
         refreshLayout.setOnRefreshListener {
             applyFilter(currentFilter, filters.keys, emptyText)
             refreshLayout.isRefreshing = false
-            Toast.makeText(requireContext(), "已更新订单", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "已更新数据", Toast.LENGTH_SHORT).show()
         }
 
         buttonSchool.setOnClickListener {
@@ -88,7 +102,22 @@ class OrdersFragment : Fragment() {
             showOrderNotifications()
         }
 
+        updateModeButtons(btnRequester, btnProvider)
         applyFilter(OrderFilter.ALL, filters.keys, emptyText)
+    }
+
+    private fun updateModeButtons(requester: MaterialButton, provider: MaterialButton) {
+        if (currentMode == OrderMode.REQUESTER) {
+            requester.setBackgroundResource(R.drawable.bg_chip_success)
+            requester.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_primary))
+            provider.setBackgroundResource(R.drawable.bg_chip_neutral)
+            provider.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
+        } else {
+            provider.setBackgroundResource(R.drawable.bg_chip_success)
+            provider.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_primary))
+            requester.setBackgroundResource(R.drawable.bg_chip_neutral)
+            requester.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
+        }
     }
 
     override fun onResume() {
@@ -104,13 +133,25 @@ class OrdersFragment : Fragment() {
         currentFilter = filter
         updateFilterButtons(filter, buttons)
 
-        val filtered = when (filter) {
-            OrderFilter.ALL -> AppDataStore.orders.toList()
-            else -> AppDataStore.orders.filter { it.status == filter.status }
+        val rawList: List<Any> = if (currentMode == OrderMode.REQUESTER) {
+            AppDataStore.orders
+        } else {
+            AppDataStore.tasks
         }
 
+        val filtered = rawList.filter { item ->
+            val status = when (item) {
+                is OrderItem -> item.status
+                is TaskItem -> item.status
+                else -> ""
+            }
+            filter == OrderFilter.ALL || status == filter.status
+        }
+
+        ordersAdapter.updateMode(currentMode)
         ordersAdapter.submitList(filtered)
         emptyText.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
+        emptyText.text = if (currentMode == OrderMode.REQUESTER) "暂无订单" else "暂无发布或可接任务"
     }
 
     private fun updateFilterButtons(filter: OrderFilter, buttons: Collection<MaterialButton>) {
@@ -139,44 +180,53 @@ class OrdersFragment : Fragment() {
         }
     }
 
-    private fun handleOrderAction(order: OrderItem, action: OrderAction) {
+    private fun handleAction(item: Any, action: String) {
         when (action) {
-            OrderAction.CANCEL -> {
-                releaseBookedService(order)
-                updateOrderStatus(order, "已取消")
-                Toast.makeText(requireContext(), "已取消订单", Toast.LENGTH_SHORT).show()
+            "CANCEL" -> {
+                if (item is OrderItem) {
+                    AppDataStore.releaseServiceBooking(item)
+                    item.status = "已取消"
+                    Toast.makeText(requireContext(), "已取消订单", Toast.LENGTH_SHORT).show()
+                }
             }
-            OrderAction.PROGRESS -> {
-                Toast.makeText(requireContext(), "正在查看进度", Toast.LENGTH_SHORT).show()
+            "DELETE" -> {
+                if (item is OrderItem) {
+                    AppDataStore.releaseServiceBooking(item)
+                    AppDataStore.orders.remove(item)
+                    Toast.makeText(requireContext(), "已删除订单", Toast.LENGTH_SHORT).show()
+                }
             }
-            OrderAction.REORDER -> {
-                Toast.makeText(requireContext(), "已创建相同需求", Toast.LENGTH_SHORT).show()
+            "ACCEPT" -> {
+                if (item is TaskItem) {
+                    item.status = "进行中"
+                    Toast.makeText(requireContext(), "已接单，任务进行中", Toast.LENGTH_SHORT).show()
+                }
             }
-            OrderAction.REVIEW -> {
-                Toast.makeText(requireContext(), "进入评价", Toast.LENGTH_SHORT).show()
+            "COMPLETE" -> {
+                if (item is TaskItem) {
+                    item.status = "已完成"
+                    Toast.makeText(requireContext(), "任务已完成", Toast.LENGTH_SHORT).show()
+                }
             }
-            OrderAction.DELETE -> {
-                releaseBookedService(order)
-                AppDataStore.orders.remove(order)
-                Toast.makeText(requireContext(), "已删除订单", Toast.LENGTH_SHORT).show()
-            }
-            OrderAction.CONTACT -> {
-                Toast.makeText(requireContext(), "正在联系对方", Toast.LENGTH_SHORT).show()
+            "REVIEW" -> {
+                showRatingDialog(item)
             }
         }
-
         refreshOrders()
     }
 
-    private fun updateOrderStatus(order: OrderItem, newStatus: String) {
-        val index = AppDataStore.orders.indexOfFirst { it == order }
-        if (index != -1) {
-            AppDataStore.orders[index] = order.copy(status = newStatus)
-        }
-    }
-
-    private fun releaseBookedService(order: OrderItem) {
-        AppDataStore.releaseServiceBooking(order)
+    private fun showRatingDialog(item: Any) {
+        val ratings = arrayOf("1星", "2星", "3星", "4星", "5星")
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("评价服务")
+            .setItems(ratings) { _, which ->
+                val ratingValue = which + 1
+                if (item is OrderItem) item.rating = ratingValue
+                if (item is TaskItem) item.rating = ratingValue
+                Toast.makeText(requireContext(), "感谢您的评价：$ratingValue 星", Toast.LENGTH_SHORT).show()
+                refreshOrders()
+            }
+            .show()
     }
 
     private fun refreshOrders() {
@@ -193,33 +243,10 @@ class OrdersFragment : Fragment() {
     }
 
     private fun showOrderNotifications() {
-        val pending = AppDataStore.orders.filter { it.status == "待接单" }
-        val inProgress = AppDataStore.orders.filter { it.status == "进行中" }
-
-        if (pending.isEmpty() && inProgress.isEmpty()) {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("订单通知")
-                .setMessage("暂无新的订单动态")
-                .setPositiveButton("关闭", null)
-                .show()
-            return
-        }
-
-        val lines = buildList {
-            if (pending.isNotEmpty()) {
-                add("待接单：")
-                pending.take(3).forEach { add("• ${it.title}") }
-            }
-            if (inProgress.isNotEmpty()) {
-                if (pending.isNotEmpty()) add("")
-                add("进行中：")
-                inProgress.take(3).forEach { add("• ${it.title}") }
-            }
-        }
-
+        val message = AppDataStore.getNotificationMessage()
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("订单通知")
-            .setMessage(lines.joinToString("\n"))
+            .setTitle("通知")
+            .setMessage(message)
             .setPositiveButton("关闭", null)
             .show()
     }
@@ -236,24 +263,19 @@ class OrdersFragment : Fragment() {
         CANCELLED("已取消")
     }
 
-    private enum class OrderAction {
-        CANCEL,
-        PROGRESS,
-        REORDER,
-        REVIEW,
-        DELETE,
-        CONTACT
-    }
-
     private class OrdersAdapter(
-        private val onCardClick: (OrderItem) -> Unit,
-        private val onPrimaryAction: (OrderItem, OrderAction) -> Unit,
-        private val onSecondaryAction: (OrderItem, OrderAction) -> Unit
+        private var mode: OrderMode,
+        private val onCardClick: (Any) -> Unit,
+        private val onAction: (Any, String) -> Unit
     ) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
 
-        private val items = mutableListOf<OrderItem>()
+        private val items = mutableListOf<Any>()
 
-        fun submitList(newItems: List<OrderItem>) {
+        fun updateMode(newMode: OrderMode) {
+            mode = newMode
+        }
+
+        fun submitList(newItems: List<Any>) {
             items.clear()
             items.addAll(newItems)
             notifyDataSetChanged()
@@ -266,7 +288,7 @@ class OrdersFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
-            holder.bind(items[position], onCardClick, onPrimaryAction, onSecondaryAction)
+            holder.bind(items[position], mode, onCardClick, onAction)
         }
 
         override fun getItemCount(): Int = items.size
@@ -283,136 +305,162 @@ class OrdersFragment : Fragment() {
             private val secondaryAction = itemView.findViewById<MaterialButton>(R.id.order_action_secondary)
 
             fun bind(
-                item: OrderItem,
-                onCardClick: (OrderItem) -> Unit,
-                onPrimaryAction: (OrderItem, OrderAction) -> Unit,
-                onSecondaryAction: (OrderItem, OrderAction) -> Unit
+                item: Any,
+                mode: OrderMode,
+                onCardClick: (Any) -> Unit,
+                onAction: (Any, String) -> Unit
             ) {
-                statusBadge.text = item.status
-                title.text = item.title
-                category.text = item.category
-                price.text = formatPrice(item.price)
-                time.text = "刚刚"
-                if (item.location.isBlank()) {
+                val itemTitle: String
+                val itemCategory: String
+                val itemPrice: String
+                val itemStatus: String
+                val itemDescription: String
+                val itemLocation: String
+                val itemRating: Int?
+
+                if (item is OrderItem) {
+                    itemTitle = item.title
+                    itemCategory = item.category
+                    itemPrice = item.price
+                    itemStatus = item.status
+                    itemDescription = item.description
+                    itemLocation = item.location
+                    itemRating = item.rating
+                } else if (item is TaskItem) {
+                    itemTitle = item.title
+                    itemCategory = item.category
+                    itemPrice = item.price
+                    itemStatus = item.status
+                    itemDescription = item.description
+                    itemLocation = item.location
+                    itemRating = item.rating
+                } else return
+
+                statusBadge.text = itemStatus
+                title.text = itemTitle
+                category.text = itemCategory
+                price.text = if (itemPrice.startsWith("¥") || itemPrice.contains("元")) itemPrice else "¥$itemPrice"
+                time.text = if (itemRating != null) "评分：$itemRating 星" else "刚刚"
+                
+                if (itemLocation.isBlank()) {
                     location.visibility = View.GONE
                 } else {
                     location.visibility = View.VISIBLE
-                    location.text = item.location
+                    location.text = itemLocation
                 }
 
-                if (item.description.isBlank()) {
+                if (itemDescription.isBlank()) {
                     description.visibility = View.GONE
                 } else {
                     description.visibility = View.VISIBLE
-                    description.text = item.description
+                    description.text = itemDescription
                 }
 
-                when (item.status) {
-                    "待接单" -> {
-                        applyBadgeStyle(R.drawable.bg_chip_warning, R.color.tertiary_amber)
-                        primaryAction.text = "取消订单"
-                        primaryAction.visibility = View.VISIBLE
-                        secondaryAction.visibility = View.GONE
-                        styleOutlinedAction(primaryAction, R.color.outline_variant, R.color.blue_on_surface)
-                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.CANCEL) }
+                primaryAction.visibility = View.VISIBLE
+                secondaryAction.visibility = View.GONE
+
+                if (mode == OrderMode.REQUESTER) {
+                    when (itemStatus) {
+                        "待接单" -> {
+                            applyBadgeStyle(R.drawable.bg_chip_warning, R.color.tertiary_amber)
+                            primaryAction.text = "取消订单"
+                            styleOutlinedAction(primaryAction, R.color.outline_variant, R.color.blue_on_surface)
+                            primaryAction.setOnClickListener { onAction(item, "CANCEL") }
+                        }
+                        "进行中" -> {
+                            applyBadgeStyle(R.drawable.bg_chip_info, R.color.info_blue)
+                            primaryAction.text = "查看进度"
+                            stylePrimaryAction(primaryAction)
+                            primaryAction.setOnClickListener { Toast.makeText(itemView.context, "正在追踪进度", Toast.LENGTH_SHORT).show() }
+                        }
+                        "已完成" -> {
+                            applyBadgeStyle(R.drawable.bg_chip_success, R.color.secondary_green)
+                            primaryAction.text = if (itemRating == null) "评价服务" else "已评价"
+                            primaryAction.isEnabled = itemRating == null
+                            styleOutlinedAction(primaryAction, R.color.secondary_green, R.color.secondary_green)
+                            primaryAction.setOnClickListener { onAction(item, "REVIEW") }
+                        }
+                        "已取消" -> {
+                            applyBadgeStyle(R.drawable.bg_chip_neutral, R.color.outline)
+                            primaryAction.text = "删除订单"
+                            styleOutlinedAction(primaryAction, R.color.outline_variant, R.color.blue_on_surface)
+                            primaryAction.setOnClickListener { onAction(item, "DELETE") }
+                        }
                     }
-                    "进行中" -> {
-                        applyBadgeStyle(R.drawable.bg_chip_info, R.color.info_blue)
-                        primaryAction.text = "查看进度"
-                        primaryAction.visibility = View.VISIBLE
-                        secondaryAction.visibility = View.GONE
-                        stylePrimaryAction(primaryAction)
-                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.PROGRESS) }
-                    }
-                    "已完成" -> {
-                        applyBadgeStyle(R.drawable.bg_chip_success, R.color.secondary_green)
-                        secondaryAction.text = "再来一单"
-                        primaryAction.text = "评价服务"
-                        secondaryAction.visibility = View.VISIBLE
-                        primaryAction.visibility = View.VISIBLE
-                        styleOutlinedAction(secondaryAction, R.color.outline_variant, R.color.blue_on_surface)
-                        styleOutlinedAction(primaryAction, R.color.secondary_green, R.color.secondary_green)
-                        secondaryAction.setOnClickListener { onSecondaryAction(item, OrderAction.REORDER) }
-                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.REVIEW) }
-                    }
-                    "已取消" -> {
-                        applyBadgeStyle(R.drawable.bg_chip_neutral, R.color.outline)
-                        primaryAction.text = "删除订单"
-                        primaryAction.visibility = View.VISIBLE
-                        secondaryAction.visibility = View.GONE
-                        styleOutlinedAction(primaryAction, R.color.outline_variant, R.color.blue_on_surface)
-                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.DELETE) }
-                    }
-                    else -> {
-                        applyBadgeStyle(R.drawable.bg_chip_neutral, R.color.blue_on_surface)
-                        primaryAction.text = "联系对方"
-                        primaryAction.visibility = View.VISIBLE
-                        secondaryAction.visibility = View.GONE
-                        stylePrimaryAction(primaryAction)
-                        primaryAction.setOnClickListener { onPrimaryAction(item, OrderAction.CONTACT) }
+                } else {
+                    // PROVIDER mode
+                    when (itemStatus) {
+                        "待接单" -> {
+                            applyBadgeStyle(R.drawable.bg_chip_warning, R.color.tertiary_amber)
+                            primaryAction.text = "接单"
+                            stylePrimaryAction(primaryAction)
+                            primaryAction.setOnClickListener { onAction(item, "ACCEPT") }
+                        }
+                        "进行中" -> {
+                            applyBadgeStyle(R.drawable.bg_chip_info, R.color.info_blue)
+                            primaryAction.text = "标记完成"
+                            stylePrimaryAction(primaryAction)
+                            primaryAction.setOnClickListener { onAction(item, "COMPLETE") }
+                        }
+                        "已完成" -> {
+                            applyBadgeStyle(R.drawable.bg_chip_success, R.color.secondary_green)
+                            primaryAction.text = if (itemRating != null) "评分：$itemRating 星" else "等待评价"
+                            primaryAction.isEnabled = false
+                            styleOutlinedAction(primaryAction, R.color.outline_variant, R.color.outline)
+                        }
+                        else -> {
+                            primaryAction.visibility = View.GONE
+                        }
                     }
                 }
 
                 itemView.setOnClickListener { onCardClick(item) }
             }
 
-            private fun formatPrice(raw: String): String {
-                return when {
-                    raw.contains("¥") -> raw
-                    raw.contains("元") -> raw
-                    else -> "¥$raw"
-                }
-            }
-
             private fun applyBadgeStyle(backgroundRes: Int, textColorRes: Int) {
                 statusBadge.setBackgroundResource(backgroundRes)
-                statusBadge.setTextColor(
-                    ContextCompat.getColor(itemView.context, textColorRes)
-                )
+                statusBadge.setTextColor(ContextCompat.getColor(itemView.context, textColorRes))
             }
 
             private fun stylePrimaryAction(button: MaterialButton) {
-                val background = ContextCompat.getColor(itemView.context, R.color.blue_primary)
-                val text = ContextCompat.getColor(itemView.context, R.color.blue_on_primary)
-                button.backgroundTintList = ColorStateList.valueOf(background)
-                button.setTextColor(text)
+                button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context, R.color.blue_primary))
+                button.setTextColor(ContextCompat.getColor(itemView.context, R.color.blue_on_primary))
                 button.strokeWidth = 0
             }
 
-            private fun styleOutlinedAction(
-                button: MaterialButton,
-                strokeColorRes: Int,
-                textColorRes: Int
-            ) {
-                val strokeColor = ContextCompat.getColor(itemView.context, strokeColorRes)
-                val textColor = ContextCompat.getColor(itemView.context, textColorRes)
-                val transparent = ContextCompat.getColor(itemView.context, android.R.color.transparent)
-                button.backgroundTintList = ColorStateList.valueOf(transparent)
-                button.strokeColor = ColorStateList.valueOf(strokeColor)
-                button.strokeWidth = dp(1)
-                button.setTextColor(textColor)
-            }
-
-            private fun dp(value: Int): Int {
-                return (value * itemView.resources.displayMetrics.density).toInt()
+            private fun styleOutlinedAction(button: MaterialButton, strokeColorRes: Int, textColorRes: Int) {
+                button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context, android.R.color.transparent))
+                button.strokeColor = ColorStateList.valueOf(ContextCompat.getColor(itemView.context, strokeColorRes))
+                button.strokeWidth = (1 * itemView.resources.displayMetrics.density).toInt()
+                button.setTextColor(ContextCompat.getColor(itemView.context, textColorRes))
             }
         }
     }
-    private fun showOrderDetail(order: OrderItem) {
-        val message = """
-        类型：${order.category}
-        提供者：${order.provider}
-        价格：${order.price}
-        状态：${order.status}
-        地点：${order.location}
-        
-        订单说明：
-        ${order.description}
-    """.trimIndent()
+
+    private fun showOrderDetail(item: Any) {
+        val title: String
+        val details = mutableListOf<String>()
+
+        if (item is OrderItem) {
+            title = item.title
+            details.add("类型：${item.category}")
+            details.add("提供者：${item.provider}")
+            details.add("价格：${item.price}")
+            details.add("状态：${item.status}")
+            details.add("地点：${item.location}")
+            details.add("\n描述：${item.description}")
+        } else if (item is TaskItem) {
+            title = item.title
+            details.add("类型：${item.category}")
+            details.add("价格：${item.price}")
+            details.add("状态：${item.status}")
+            details.add("地点：${item.location}")
+            details.add("\n描述：${item.description}")
+        } else return
 
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(order.title)
-            .setMessage(message)
+            .setTitle(title)
+            .setMessage(details.joinToString("\n"))
             .setPositiveButton("关闭", null)
             .show()
     }

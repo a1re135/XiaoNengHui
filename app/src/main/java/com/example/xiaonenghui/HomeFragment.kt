@@ -228,11 +228,31 @@ class HomeFragment : Fragment() {
             details.add("任务描述：${task.description}")
         }
 
+        val alreadyBooked = AppDataStore.isTaskBooked(task)
+
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.home_task_detail))
             .setMessage(details.joinToString("\n"))
             .setNegativeButton(getString(R.string.home_close), null)
+            .setPositiveButton(
+                if (alreadyBooked) "已预约" else "立即预约"
+            ) { _, _ ->
+                if (alreadyBooked) return@setPositiveButton
+
+                val order = AppDataStore.bookTask(task)
+                if (order != null) {
+                    Toast.makeText(requireContext(), "预约成功，已加入订单", Toast.LENGTH_SHORT).show()
+                    (activity as? MainActivity)?.selectBottomTab(R.id.nav_orders)
+                } else {
+                    Toast.makeText(requireContext(), "该任务已预约", Toast.LENGTH_SHORT).show()
+                }
+            }
             .show()
+            .apply {
+                if (alreadyBooked || task.status != "待接单") {
+                    getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
+                }
+            }
     }
 
     private fun performSearch(rawKeyword: String) {
@@ -282,22 +302,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun showNotifications() {
-        val pendingTasks = AppDataStore.tasks.filter { it.status == "待接单" }
-        if (pendingTasks.isEmpty()) {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.home_notifications))
-                .setMessage(getString(R.string.home_no_notifications))
-                .setPositiveButton(getString(R.string.home_close), null)
-                .show()
-            return
-        }
-
-        val title = getString(R.string.home_notification_pending, pendingTasks.size)
-        val listText = pendingTasks.take(3).joinToString("\n") { "• ${it.title}" }
-
+        val message = AppDataStore.getNotificationMessage()
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.home_notifications))
-            .setMessage("$title\n$listText")
+            .setMessage(message)
             .setPositiveButton(getString(R.string.home_close), null)
             .show()
     }
