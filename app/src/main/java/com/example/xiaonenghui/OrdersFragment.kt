@@ -176,9 +176,7 @@ class OrdersFragment : Fragment() {
     }
 
     private fun releaseBookedService(order: OrderItem) {
-        if (order.sourceServiceKey.isNotBlank()) {
-            AppDataStore.bookedServiceKeys.remove(order.sourceServiceKey)
-        }
+        AppDataStore.releaseServiceBooking(order)
     }
 
     private fun refreshOrders() {

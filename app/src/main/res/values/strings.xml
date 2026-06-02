@@ -38,6 +38,9 @@
     <string name="home_search_results">搜索结果</string>
     <string name="home_service_detail">服务详情</string>
     <string name="home_book_now">立即预约</string>
+    <string name="home_booked_label">已预约</string>
+    <string name="home_service_already_booked">该服务已预约</string>
+    <string name="home_book_success">预约成功，已加入我的订单</string>
     <string name="home_book_toast">预约功能将在后续版本完善</string>
     <string name="home_close">关闭</string>
     <string name="home_notifications">通知</string>
@@ -62,6 +65,7 @@
     <string name="home_tag_tutoring">技能传授</string>
     <string name="home_service_math">高等数学辅导</string>
     <string name="home_rating_star">★</string>
+    <string name="home_service_provider">提供者：%1$s</string>
     <string name="home_rating_49">4.9</string>
     <string name="home_price_30">￥30/时</string>
     <string name="home_tag_design">设计制作</string>

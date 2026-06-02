@@ -287,8 +287,8 @@ class ServicesFragment : Fragment() {
             service.description
         )
 
-        val alreadyBooked = isServiceBooked(service)
-        val positiveLabel = if (alreadyBooked) "已预约" else "立即预约"
+        val alreadyBooked = AppDataStore.isServiceBooked(service)
+        val positiveLabel = if (alreadyBooked) getString(R.string.home_booked_label) else getString(R.string.home_book_now)
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(service.title)
@@ -389,45 +389,22 @@ class ServicesFragment : Fragment() {
     }
 
     private fun bookService(service: ServiceItem) {
-        if (isServiceBooked(service)) {
+        if (AppDataStore.isServiceBooked(service)) {
             showSingleToast("该服务已预约")
             return
         }
 
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("确认预约")
-            .setMessage(
-                """
-            服务名称：${service.title}
-            提供者：${service.provider}
-            价格：${service.price}
-            
-            确定要预约这个服务吗？
-            """.trimIndent()
-            )
-            .setNegativeButton("取消", null)
-            .setPositiveButton("确认预约") { _, _ ->
-                val newOrder = OrderItem(
-                    title = service.title,
-                    category = service.category,
-                    provider = service.provider,
-                    price = service.price,
-                    status = "待接单",
-                    description = service.description,
-                    location = if (service.location.isBlank()) "线上" else service.location,
-                    sourceServiceKey = serviceKey(service)
-                )
+        val bookedOrder = AppDataStore.bookService(service)
+        if (bookedOrder == null) {
+            showSingleToast("该服务已预约")
+            return
+        }
 
-                AppDataStore.orders.add(0, newOrder)
-                AppDataStore.bookedServiceKeys.add(serviceKey(service))
+        updateBookingStateForAll()
 
-                updateBookingStateForAll()
+        Toast.makeText(requireContext(), "预约成功，已加入我的订单", Toast.LENGTH_SHORT).show()
 
-                Toast.makeText(requireContext(), "预约成功，已加入我的订单", Toast.LENGTH_SHORT).show()
-
-                (activity as? MainActivity)?.selectBottomTab(R.id.nav_orders)
-            }
-            .show()
+        (activity as? MainActivity)?.selectBottomTab(R.id.nav_orders)
     }
     private fun showSingleToast(message: String) {
         val now = System.currentTimeMillis()
@@ -721,7 +698,7 @@ class ServicesFragment : Fragment() {
     }
 
     private fun applyBookingState(binding: ServiceCardBinding) {
-        val booked = isServiceBooked(binding.service)
+        val booked = AppDataStore.isServiceBooked(binding.service)
         val button = binding.bookButton
 
         if (booked) {
@@ -741,11 +718,4 @@ class ServicesFragment : Fragment() {
         }
     }
 
-    private fun isServiceBooked(service: ServiceItem): Boolean {
-        return AppDataStore.bookedServiceKeys.contains(serviceKey(service))
-    }
-
-    private fun serviceKey(service: ServiceItem): String {
-        return "${service.title}::${service.provider}"
-    }
 }

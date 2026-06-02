@@ -34,6 +34,7 @@ class HomeServiceAdapter(
 
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val cover = itemView.findViewById<View>(R.id.service_cover)
+        private val bookedLabel = itemView.findViewById<TextView>(R.id.service_booked_label)
         private val tag = itemView.findViewById<TextView>(R.id.service_tag)
         private val title = itemView.findViewById<TextView>(R.id.service_title)
         private val provider = itemView.findViewById<TextView>(R.id.service_provider)
@@ -65,9 +66,10 @@ class HomeServiceAdapter(
 
             tag.text = item.category
             title.text = item.title
-            provider.text = "提供者：${item.provider}"
+            provider.text = itemView.context.getString(R.string.home_service_provider, item.provider)
             rating.text = item.rating
             price.text = item.price
+            bookedLabel.visibility = if (AppDataStore.isServiceBooked(item)) View.VISIBLE else View.GONE
 
             if (item.description.isBlank()) {
                 desc.visibility = View.GONE

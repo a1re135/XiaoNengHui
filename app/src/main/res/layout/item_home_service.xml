@@ -14,11 +14,31 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <View
-            android:id="@+id/service_cover"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@drawable/bg_recommend_primary" />
+            android:layout_height="80dp">
+
+            <View
+                android:id="@+id/service_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_recommend_primary" />
+
+            <TextView
+                android:id="@+id/service_booked_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="10dp"
+                android:background="@drawable/bg_chip_success"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="@string/home_booked_label"
+                android:textColor="@color/blue_primary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -38,7 +38,6 @@ class HomeFragment : Fragment() {
         val cardErrands = view.findViewById<MaterialCardView>(R.id.card_errands)
         val cardPostTask = view.findViewById<MaterialCardView>(R.id.card_post_task)
         val cardMyOrders = view.findViewById<MaterialCardView>(R.id.card_my_orders)
-        val cardRating = view.findViewById<MaterialCardView>(R.id.card_rating)
         val buttonSwitchRole = view.findViewById<MaterialButton>(R.id.btn_switch_role)
         loadMoreButton = view.findViewById(R.id.button_load_more_tasks)
         val viewMoreButton = view.findViewById<TextView>(R.id.button_view_more)
@@ -49,7 +48,7 @@ class HomeFragment : Fragment() {
 
         setupServiceRecycler(view)
         setupTaskRecycler(view)
-        updateRoleLabel()
+        updateRoleControls(buttonSwitchRole)
 
         loadMoreButton.setOnClickListener {
             if (visibleTaskCount < AppDataStore.tasks.size) {
@@ -104,13 +103,14 @@ class HomeFragment : Fragment() {
             (activity as? MainActivity)?.selectBottomTab(R.id.nav_orders)
         }
 
-        cardRating.setOnClickListener {
-            (activity as? MainActivity)?.selectBottomTab(R.id.nav_profile)
-        }
-
         buttonSwitchRole.setOnClickListener {
-            Toast.makeText(requireContext(), "身份切换功能将在个人中心完善", Toast.LENGTH_SHORT).show()
-            (activity as? MainActivity)?.selectBottomTab(R.id.nav_profile)
+            AppDataStore.currentRole = if (AppDataStore.currentRole == getString(R.string.home_role_requester)) {
+                getString(R.string.profile_role_provider)
+            } else {
+                getString(R.string.home_role_requester)
+            }
+            updateRoleControls(buttonSwitchRole)
+            Toast.makeText(requireContext(), getString(R.string.profile_role_switched, AppDataStore.currentRole), Toast.LENGTH_SHORT).show()
         }
 
         updateTaskList()
@@ -118,7 +118,10 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        updateRoleLabel()
+        updateRoleControls(view?.findViewById(R.id.btn_switch_role))
+        if (::serviceAdapter.isInitialized) {
+            serviceAdapter.submitList(AppDataStore.services)
+        }
         updateTaskList()
     }
 
@@ -152,8 +155,13 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun updateRoleLabel() {
+    private fun updateRoleControls(buttonSwitchRole: MaterialButton?) {
         roleTextView?.text = AppDataStore.currentRole
+        buttonSwitchRole?.text = if (AppDataStore.currentRole == getString(R.string.home_role_requester)) {
+            getString(R.string.profile_role_switch_to_provider)
+        } else {
+            getString(R.string.profile_role_switch_to_requester)
+        }
     }
 
     private fun showServiceDialog(service: ServiceItem) {
@@ -179,10 +187,32 @@ class HomeFragment : Fragment() {
             .setTitle(getString(R.string.home_service_detail))
             .setMessage(details.joinToString("\n"))
             .setNegativeButton(getString(R.string.home_close), null)
-            .setPositiveButton(getString(R.string.home_book_now)) { _, _ ->
-                Toast.makeText(requireContext(), getString(R.string.home_book_toast), Toast.LENGTH_SHORT).show()
+            .setPositiveButton(
+                if (AppDataStore.isServiceBooked(service)) {
+                    getString(R.string.home_booked_label)
+                } else {
+                    getString(R.string.home_book_now)
+                }
+            ) { _, _ ->
+                val order = AppDataStore.bookService(service)
+                if (order == null) {
+                    Toast.makeText(requireContext(), getString(R.string.home_service_already_booked), Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                if (::serviceAdapter.isInitialized) {
+                    serviceAdapter.submitList(AppDataStore.services)
+                }
+
+                Toast.makeText(requireContext(), getString(R.string.home_book_success), Toast.LENGTH_SHORT).show()
+                (activity as? MainActivity)?.selectBottomTab(R.id.nav_orders)
             }
             .show()
+            .apply {
+                if (AppDataStore.isServiceBooked(service)) {
+                    getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
+                }
+            }
     }
 
     private fun showTaskDialog(task: TaskItem) {

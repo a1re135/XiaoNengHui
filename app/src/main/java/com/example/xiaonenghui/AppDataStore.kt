@@ -40,6 +40,44 @@ object AppDataStore {
     val orders = mutableListOf<OrderItem>()
     val bookedServiceKeys = mutableSetOf<String>()
 
+    fun serviceKey(service: ServiceItem): String = "${service.title}::${service.provider}"
+
+    fun isServiceBooked(service: ServiceItem): Boolean {
+        return bookedServiceKeys.contains(serviceKey(service))
+    }
+
+    fun buildOrderFromService(service: ServiceItem): OrderItem {
+        val key = serviceKey(service)
+        return OrderItem(
+            title = service.title,
+            category = service.category,
+            provider = service.provider,
+            price = service.price,
+            status = "待接单",
+            description = service.description,
+            location = service.location.ifBlank { "线上" },
+            sourceServiceKey = key
+        )
+    }
+
+    fun bookService(service: ServiceItem): OrderItem? {
+        val key = serviceKey(service)
+        if (bookedServiceKeys.contains(key)) {
+            return null
+        }
+
+        val order = buildOrderFromService(service)
+        orders.add(0, order)
+        bookedServiceKeys.add(key)
+        return order
+    }
+
+    fun releaseServiceBooking(order: OrderItem) {
+        if (order.sourceServiceKey.isNotBlank()) {
+            bookedServiceKeys.remove(order.sourceServiceKey)
+        }
+    }
+
     val services = mutableListOf(
         ServiceItem(
             title = "高等数学辅导",
