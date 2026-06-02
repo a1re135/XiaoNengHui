@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
 
     fun logout(){
         setLoggedIn(false)
+        UserStore.logout(this)
         showLoginUi()
     }
 

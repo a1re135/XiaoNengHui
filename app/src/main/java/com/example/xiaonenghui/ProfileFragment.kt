@@ -12,9 +12,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ProfileFragment : Fragment() {
 
-    private val profileName = "陈同学"
-    private val profileStudentId = "1820241091"
-
     private var roleChip: TextView? = null
     private var roleSwitchButton: TextView? = null
     private var statOrdersValue: TextView? = null
@@ -49,14 +46,17 @@ class ProfileFragment : Fragment() {
         val schoolButton = view.findViewById<View>(R.id.button_profile_school)
         val notificationButton = view.findViewById<View>(R.id.button_profile_notifications)
 
-        nameView.text = profileName
-        idView.text = getString(R.string.profile_student_id_value, profileStudentId)
+        refreshUi()
 
         profileCard.setOnClickListener {
+            val context = requireContext()
+            val currentName = UserStore.getCurrentUserName(context)
+            val currentId = UserStore.getCurrentStudentId(context) ?: "未登录"
+            
             val info = buildString {
-                append("用户名：").append(profileName)
+                append("用户名：").append(currentName)
                 append('\n')
-                append(getString(R.string.profile_student_id_value, profileStudentId))
+                append("学号：").append(currentId)
                 append('\n')
                 append(getString(R.string.profile_current_role_value, AppDataStore.currentRole))
             }
@@ -118,7 +118,15 @@ class ProfileFragment : Fragment() {
     }
 
     private fun refreshUi() {
+        if (!isAdded) return
+        val context = requireContext()
         val currentRole = AppDataStore.currentRole
+        val currentName = UserStore.getCurrentUserName(context)
+        val currentId = UserStore.getCurrentStudentId(context) ?: "未登录"
+
+        view?.findViewById<TextView>(R.id.profile_name)?.text = currentName
+        view?.findViewById<TextView>(R.id.profile_student_id)?.text = "学号 $currentId"
+
         roleChip?.text = getString(R.string.profile_current_role_value, currentRole)
         roleSwitchButton?.text = if (currentRole == "需求方") {
             "切换为服务提供者"
@@ -132,11 +140,13 @@ class ProfileFragment : Fragment() {
     }
 
     private fun toggleRole() {
-        AppDataStore.currentRole = if (AppDataStore.currentRole == "需求方") {
+        val newRole = if (AppDataStore.currentRole == "需求方") {
             "服务提供者"
         } else {
             "需求方"
         }
+        AppDataStore.currentRole = newRole
+        UserStore.updateUserRole(requireContext(), newRole)
         refreshUi()
         Toast.makeText(requireContext(), "已切换为${AppDataStore.currentRole}", Toast.LENGTH_SHORT).show()
     }

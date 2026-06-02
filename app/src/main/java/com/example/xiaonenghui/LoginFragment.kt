@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButtonToggleGroup
 
@@ -25,6 +26,7 @@ class LoginFragment : Fragment() {
         val signInPassword = view.findViewById<TextInputEditText>(R.id.sign_in_password)
 
         val signUpStudentId = view.findViewById<TextInputEditText>(R.id.sign_up_student_id)
+        val signUpName = view.findViewById<TextInputEditText>(R.id.sign_up_name)
         val signUpPassword = view.findViewById<TextInputEditText>(R.id.sign_up_password)
         val signUpConfirmPassword = view.findViewById<TextInputEditText>(R.id.sign_up_confirm_password)
 
@@ -56,33 +58,39 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            if (studentId.length != 10) {
-                signInStudentId.error = "学号错误"
-                signInStudentId.requestFocus()
-                return@setOnClickListener
-            }
-
             if (password.isEmpty()) {
                 signInPassword.error = "密码不能为空"
                 signInPassword.requestFocus()
                 return@setOnClickListener
             }
 
-            showSuccessThenGoHome(view)
+            if (UserStore.loginUser(requireContext(), studentId, password)) {
+                showSuccessThenGoHome(view)
+            } else {
+                Toast.makeText(requireContext(), "学号或密码错误", Toast.LENGTH_SHORT).show()
+            }
         }
 
         view.findViewById<Button>(R.id.sign_up_button).setOnClickListener {
             val studentId = signUpStudentId.text.toString().trim()
+            val name = signUpName.text.toString().trim()
             val password = signUpPassword.text.toString().trim()
             val confirmPassword = signUpConfirmPassword.text.toString().trim()
 
             signUpStudentId.error = null
+            signUpName.error = null
             signUpPassword.error = null
             signUpConfirmPassword.error = null
 
             if (studentId.isEmpty()) {
                 signUpStudentId.error = "学号不能为空"
                 signUpStudentId.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (name.isEmpty()) {
+                signUpName.error = "姓名不能为空"
+                signUpName.requestFocus()
                 return@setOnClickListener
             }
 
@@ -110,7 +118,11 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            showSuccessThenGoHome(view)
+            if (UserStore.registerUser(requireContext(), studentId, name, password)) {
+                showSuccessThenGoHome(view)
+            } else {
+                Toast.makeText(requireContext(), "该学号已注册", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
