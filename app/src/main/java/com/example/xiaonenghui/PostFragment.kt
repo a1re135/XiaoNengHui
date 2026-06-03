@@ -161,6 +161,7 @@ class PostFragment : Fragment() {
 
             val category = selectedTypeView.text?.toString()?.trim().orEmpty()
             val finalCategory = category.ifEmpty { "其他" }
+            val currentUserName = UserStore.getCurrentUserName(requireContext())
 
             val newTask = TaskItem(
                 title = title,
@@ -173,7 +174,20 @@ class PostFragment : Fragment() {
                 isPostedByMe = true
             )
 
+            val newService = ServiceItem(
+                id = newTask.id,
+                title = title,
+                category = finalCategory,
+                provider = if (currentUserName == "未登录") "我 (发布者)" else currentUserName,
+                price = "${price}元",
+                rating = "新",
+                description = description,
+                location = location,
+                schedule = time
+            )
+
             AppDataStore.tasks.add(0, newTask)
+            AppDataStore.services.add(0, newService)
 
             Toast.makeText(requireContext(), "任务发布成功", Toast.LENGTH_SHORT).show()
 

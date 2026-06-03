@@ -50,11 +50,11 @@ object AppDataStore {
     val bookedTaskIds = mutableSetOf<String>()
 
     fun isServiceBooked(service: ServiceItem): Boolean {
-        return bookedServiceIds.contains(service.id)
+        return bookedServiceIds.contains(service.id) || bookedTaskIds.contains(service.id)
     }
 
     fun isTaskBooked(task: TaskItem): Boolean {
-        return bookedTaskIds.contains(task.id)
+        return bookedTaskIds.contains(task.id) || bookedServiceIds.contains(task.id)
     }
 
     fun bookService(service: ServiceItem): OrderItem? {

@@ -14,13 +14,10 @@ object UserStore {
 
     fun registerUser(context: Context, studentId: String, name: String, password: String): Boolean {
         val prefs = getPrefs(context)
-        // Check if student ID already exists
         if (prefs.contains("$USER_PREFIX$studentId")) return false
 
-        // Format: Name|Password|Role
         prefs.edit().putString("$USER_PREFIX$studentId", "$name|$password|需求方").apply()
-        
-        // Log in the new user immediately
+
         setCurrentUser(context, studentId)
         AppDataStore.currentRole = "需求方"
         return true
@@ -30,11 +27,9 @@ object UserStore {
         val prefs = getPrefs(context)
         val data = prefs.getString("$USER_PREFIX$studentId", null) ?: return false
         val parts = data.split("|")
-        
-        // parts[0] is Name, parts[1] is Password, parts[2] is Role
+
         if (parts.size >= 2 && parts[1] == password) {
             setCurrentUser(context, studentId)
-            // Load the saved role into AppDataStore
             if (parts.size >= 3) {
                 AppDataStore.currentRole = parts[2]
             }

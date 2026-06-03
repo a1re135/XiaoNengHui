@@ -15,6 +15,8 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.widget.LinearLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import android.graphics.Typeface
+import com.google.android.material.color.MaterialColors
 
 class ServicesFragment : Fragment() {
     private var lastToastMessage = ""
@@ -23,13 +25,13 @@ class ServicesFragment : Fragment() {
     private var currentCategory = "全部"
     private var currentKeyword = ""
 
-    private lateinit var serviceCards: List<ServiceCardBinding>
+    private val serviceCardBindings = mutableListOf<ServiceCardBinding>()
     private lateinit var chips: List<TextView>
     private lateinit var servicesListContainer: LinearLayout
 
     data class ServiceCardBinding(
         var service: ServiceItem,
-        val card: MaterialCardView,
+        val card: View,
         val bookButton: MaterialButton
     )
 
@@ -66,37 +68,9 @@ class ServicesFragment : Fragment() {
         )
         refreshLayout.setOnRefreshListener {
             refreshLayout.isRefreshing = false
-            updateBookingStateForAll()
+            refreshServiceList()
             showSingleToast("已更新服务")
         }
-
-        val mathService = findService("数学", fallbackMathService())
-        val pptService = findService("PPT", fallbackPptService())
-        val debugService = findService("代码", fallbackDebugService())
-        val deliveryService = findService("快递", fallbackDeliveryService())
-
-        serviceCards = listOf(
-            ServiceCardBinding(
-                service = mathService,
-                card = view.findViewById(R.id.card_service_math),
-                bookButton = view.findViewById(R.id.button_book_math)
-            ),
-            ServiceCardBinding(
-                service = pptService,
-                card = view.findViewById(R.id.card_service_ppt),
-                bookButton = view.findViewById(R.id.button_book_ppt)
-            ),
-            ServiceCardBinding(
-                service = debugService,
-                card = view.findViewById(R.id.card_service_debug),
-                bookButton = view.findViewById(R.id.button_book_debug)
-            ),
-            ServiceCardBinding(
-                service = deliveryService,
-                card = view.findViewById(R.id.card_service_delivery),
-                bookButton = view.findViewById(R.id.button_book_delivery)
-            )
-        )
 
         searchButton.setOnClickListener {
             submitSearch(searchInput.text.toString())
@@ -127,23 +101,265 @@ class ServicesFragment : Fragment() {
         chipProgramming.setOnClickListener { selectCategory("编程技术", chipProgramming) }
         chipOther.setOnClickListener { selectCategory("其他", chipOther) }
 
-        serviceCards.forEach { binding ->
-            binding.card.setOnClickListener {
-                showServiceDetail(binding.service)
-            }
-
-            binding.bookButton.setOnClickListener {
-                bookService(binding.service)
-            }
-        }
-
+        refreshServiceList()
         selectCategory("全部", chipAll)
-        updateBookingStateForAll()
     }
 
     override fun onResume() {
         super.onResume()
-        updateBookingStateForAll()
+        refreshServiceList()
+    }
+
+    private fun refreshServiceList() {
+        if (!::servicesListContainer.isInitialized) return
+        
+        servicesListContainer.removeAllViews()
+        serviceCardBindings.clear()
+
+        AppDataStore.services.forEach { service ->
+            val cardBinding = createServiceCard(service)
+            servicesListContainer.addView(cardBinding.card)
+            serviceCardBindings.add(cardBinding)
+        }
+        
+        renderServices()
+    }
+
+    private fun createServiceCard(service: ServiceItem): ServiceCardBinding {
+        val categoryStyle = resolveCategoryStyle(service.category)
+
+        val card = MaterialCardView(requireContext()).apply {
+            radius = dp(16).toFloat()
+            cardElevation = dp(4).toFloat()
+            strokeWidth = dp(1)
+            setStrokeColor(ContextCompat.getColor(requireContext(), R.color.outline_variant))
+            setCardBackgroundColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurface))
+
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(0, 0, 0, dp(12))
+            layoutParams = params
+        }
+
+        val content = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(14), dp(14), dp(14), dp(14))
+        }
+
+        val titleRow = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+        }
+
+        val icon = TextView(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(40), dp(40))
+            background = ContextCompat.getDrawable(requireContext(), categoryStyle.iconBackground)
+            gravity = android.view.Gravity.CENTER
+            text = categoryStyle.iconText
+            setTextColor(ContextCompat.getColor(requireContext(), categoryStyle.iconTextColor))
+            textSize = 16f
+            setTypeface(null, Typeface.BOLD)
+        }
+
+        val titleColumn = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            val params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT)
+            params.setMargins(dp(12), 0, 0, 0)
+            params.weight = 1f
+            layoutParams = params
+        }
+
+        val title = TextView(requireContext()).apply {
+            text = service.title
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
+            textSize = 16f
+            setTypeface(null, Typeface.BOLD)
+        }
+
+        val category = TextView(requireContext()).apply {
+            text = service.category
+            background = ContextCompat.getDrawable(requireContext(), categoryStyle.tagBackground)
+            setTextColor(ContextCompat.getColor(requireContext(), categoryStyle.tagTextColor))
+            textSize = 10f
+            setPadding(dp(4), dp(4), dp(4), dp(4))
+
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(0, dp(6), 0, 0)
+            layoutParams = params
+        }
+
+        titleColumn.addView(title)
+        titleColumn.addView(category)
+
+        val rating = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_warning)
+            gravity = android.view.Gravity.CENTER
+            setPadding(dp(8), dp(4), dp(8), dp(4))
+        }
+
+        val ratingIcon = TextView(requireContext()).apply {
+            text = "★"
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.tertiary_amber))
+            textSize = 12f
+        }
+
+        val ratingValue = TextView(requireContext()).apply {
+            text = service.rating
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
+            textSize = 12f
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(dp(4), 0, 0, 0)
+            layoutParams = params
+        }
+
+        rating.addView(ratingIcon)
+        rating.addView(ratingValue)
+
+        titleRow.addView(icon)
+        titleRow.addView(titleColumn)
+        titleRow.addView(rating)
+
+        val description = TextView(requireContext()).apply {
+            text = service.description
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
+            textSize = 13f
+
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(0, dp(10), 0, 0)
+            layoutParams = params
+        }
+
+        val bottomRow = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(0, dp(12), 0, 0)
+            layoutParams = params
+        }
+
+        val providerIcon = TextView(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(24), dp(24))
+            background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_circle_secondary)
+            gravity = android.view.Gravity.CENTER
+            text = service.provider.take(1)
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_green))
+            textSize = 12f
+            setTypeface(null, Typeface.BOLD)
+        }
+
+        val providerName = TextView(requireContext()).apply {
+            text = service.provider
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_on_surface))
+            textSize = 12f
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(dp(6), 0, 0, 0)
+            layoutParams = params
+        }
+
+        val price = TextView(requireContext()).apply {
+            text = service.price
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_primary))
+            textSize = 13f
+            setTypeface(null, Typeface.BOLD)
+            val params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT)
+            params.setMargins(dp(8), 0, 0, 0)
+            params.weight = 1f
+            layoutParams = params
+        }
+
+        val bookButton = MaterialButton(requireContext()).apply {
+            text = getString(R.string.services_book_now)
+            cornerRadius = dp(12)
+        }
+
+        bottomRow.addView(providerIcon)
+        bottomRow.addView(providerName)
+        bottomRow.addView(price)
+        bottomRow.addView(bookButton)
+
+        content.addView(titleRow)
+        content.addView(description)
+        content.addView(bottomRow)
+
+        card.addView(content)
+
+        val binding = ServiceCardBinding(
+            service = service,
+            card = card,
+            bookButton = bookButton
+        )
+
+        card.setOnClickListener {
+            showServiceDetail(service)
+        }
+
+        bookButton.setOnClickListener {
+            bookService(service)
+        }
+
+        applyBookingState(binding)
+
+        return binding
+    }
+
+    private data class CategoryStyle(
+        val iconText: String,
+        val iconBackground: Int,
+        val iconTextColor: Int,
+        val tagBackground: Int,
+        val tagTextColor: Int
+    )
+
+    private fun resolveCategoryStyle(category: String): CategoryStyle {
+        return when {
+            category.contains("创意") -> CategoryStyle(
+                iconText = "创",
+                iconBackground = R.drawable.bg_circle_secondary,
+                iconTextColor = R.color.secondary_green,
+                tagBackground = R.drawable.bg_tag_secondary,
+                tagTextColor = R.color.secondary_green
+            )
+            category.contains("跑腿") -> CategoryStyle(
+                iconText = "跑",
+                iconBackground = R.drawable.bg_circle_tertiary,
+                iconTextColor = R.color.tertiary_amber,
+                tagBackground = R.drawable.bg_tag_tertiary,
+                tagTextColor = R.color.tertiary_amber
+            )
+            category.contains("编程") -> CategoryStyle(
+                iconText = "码",
+                iconBackground = R.drawable.bg_circle_neutral,
+                iconTextColor = R.color.blue_on_surface,
+                tagBackground = R.drawable.bg_tag_tertiary,
+                tagTextColor = R.color.tertiary_amber
+            )
+            else -> CategoryStyle(
+                iconText = "辅",
+                iconBackground = R.drawable.bg_circle_primary,
+                iconTextColor = R.color.blue_primary,
+                tagBackground = R.drawable.bg_tag_primary,
+                tagTextColor = R.color.blue_primary
+            )
+        }
     }
 
     private fun submitSearch(rawKeyword: String) {
@@ -169,7 +385,7 @@ class ServicesFragment : Fragment() {
     private fun renderServices(): Int {
         var visibleCount = 0
 
-        serviceCards.forEach { binding ->
+        serviceCardBindings.forEach { binding ->
             val service = binding.service
 
             val matchesCategory =
@@ -259,19 +475,6 @@ class ServicesFragment : Fragment() {
             .show()
     }
 
-    private fun findService(keyword: String, fallback: ServiceItem): ServiceItem {
-        return AppDataStore.services.firstOrNull {
-            it.title.contains(keyword, ignoreCase = true) ||
-                    it.category.contains(keyword, ignoreCase = true) ||
-                    it.description.contains(keyword, ignoreCase = true)
-        } ?: fallback
-    }
-
-    private fun fallbackMathService() = AppDataStore.services[0]
-    private fun fallbackPptService() = AppDataStore.services[1]
-    private fun fallbackDeliveryService() = AppDataStore.services[2]
-    private fun fallbackDebugService() = AppDataStore.services[3]
-
     private fun bookService(service: ServiceItem) {
         if (AppDataStore.isServiceBooked(service)) {
             showSingleToast("该服务已预约")
@@ -284,7 +487,7 @@ class ServicesFragment : Fragment() {
             return
         }
 
-        updateBookingStateForAll()
+        refreshServiceList()
 
         Toast.makeText(requireContext(), "预约成功，已加入我的订单", Toast.LENGTH_SHORT).show()
 
@@ -308,12 +511,6 @@ class ServicesFragment : Fragment() {
 
     private fun dp(value: Int): Int {
         return (value * resources.displayMetrics.density).toInt()
-    }
-
-    private fun updateBookingStateForAll() {
-        serviceCards.forEach { binding ->
-            applyBookingState(binding)
-        }
     }
 
     private fun applyBookingState(binding: ServiceCardBinding) {
